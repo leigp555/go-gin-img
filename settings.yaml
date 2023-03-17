@@ -1,0 +1,28 @@
+mysql:
+  addr: "1.117.141.66:3306",
+  username: "root"
+  password: "lgp123456",
+  maxConn: 200,
+  maxOpen: 100,
+  dB: "img"
+redis:
+  addr: "1.117.141.66:6379",
+  password: "123456abc",
+  dB: 0,
+  poolSize: 50,
+system:
+  host: "0.0.0.0",
+  port: 8080,
+  env: "development"
+token:
+  signingKey: "e199ad17-c090-43cb-b095-1dc55c209a77",
+  expiresTime: "7d",
+log:
+  filename: "./test.log",
+  maxSize: 1,
+  maxBackups: 5,
+  maxAge: 30,
+  compress: false,
+  showLine: true,
+  prefix: "lgp"
+  level: "debug"

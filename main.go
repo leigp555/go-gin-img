@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"img/server/core"
+	"img/server/global"
+)
 
 func main() {
-	fmt.Println("hello word")
+	core.InitConf()
+	fmt.Println(global.Config)
+	fmt.Println("end ... ")
 }
