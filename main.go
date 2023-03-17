@@ -16,4 +16,5 @@ func main() {
 	core.LinkRedisDB()
 	//启动web服务
 	service.StartServer()
+
 }
