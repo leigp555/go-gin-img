@@ -2,6 +2,7 @@ package main
 
 import (
 	"img/server/core"
+	"img/server/models"
 	"img/server/service"
 )
 
@@ -14,6 +15,8 @@ func main() {
 	core.LinkMysqlDB()
 	//初始化redis
 	core.LinkRedisDB()
+	//生成mysql表
+	models.CreateTables()
 	//启动web服务
 	service.StartServer()
 
