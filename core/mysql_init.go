@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"img/server/global"
+	"time"
 )
 
 // LinkMysqlDB LinkDB 连接mysql数据库
@@ -23,6 +24,7 @@ func LinkMysqlDB() {
 	//设置连接池
 	sqlDb.SetMaxIdleConns(global.Config.Mysql.MaxConn) //设置最大连接数
 	sqlDb.SetMaxOpenConns(global.Config.Mysql.MaxOpen) //设置最大的空闲连接数
+	sqlDb.SetConnMaxLifetime(time.Hour * 4)            //连接最大复用时间，不能超过wait_timeout
 
 	global.Mydb = d
 	global.SugarLog.Info("成功连接mysql数据库")

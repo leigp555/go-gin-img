@@ -2,7 +2,7 @@ mysql:
   addr: "1.117.141.66:3306"
   username: "root"
   password: "lgp123456"
-  maxConn: 200
+  maxConn: 10
   maxOpen: 100
   db: "img"
 redis:
