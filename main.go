@@ -2,7 +2,6 @@ package main
 
 import (
 	"img/server/core"
-	"img/server/global"
 )
 
 func main() {
@@ -10,6 +9,4 @@ func main() {
 	core.InitLogger()
 	core.LinkMysqlDB()
 	core.LinkRedisDB()
-	global.SugarLog.Info("xxxxxxx")
-	global.Logger.Info("yyyyyyyyy")
 }

@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"img/server/config"
 	"img/server/global"
+	"os"
 )
 
 var logConf config.Logger
@@ -14,6 +15,7 @@ var sysConf config.System
 func InitLogger() {
 	logConf = global.Config.Logger
 	sysConf = global.Config.System
+
 	writeSyncer := getLogWriter()
 	encoder := getEncoder()
 	level := getLogLevel()
@@ -72,7 +74,12 @@ func getLogWriter() zapcore.WriteSyncer {
 		MaxAge:     logConf.MaxAge,
 		Compress:   logConf.Compress,
 	}
-	return zapcore.AddSync(lumberJackLogger)
+	if global.Config.System.Env == "dev" {
+		return zapcore.AddSync(os.Stderr) //开发模式下输出到控制台
+	} else {
+		return zapcore.AddSync(lumberJackLogger) //生产环境下输出到文件
+	}
+	//return zapcore.NewMultiWriteSyncer(syncFile, syncConsole)  //既输出到文件又输出到控制台
 }
 
 func getLogLevel() zapcore.Level {

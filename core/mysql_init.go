@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"img/server/global"
-	"log"
 )
 
 // LinkMysqlDB LinkDB 连接mysql数据库
@@ -18,7 +17,7 @@ func LinkMysqlDB() {
 		Logger: logger.Default.LogMode(logger.Info), //配置一个日志
 	})
 	if err != nil {
-		log.Panicf("mysql数据库连接失败%v\n", err)
+		global.SugarLog.Fatalf("mysql数据库连接失败%v\n", err)
 	}
 	sqlDb, _ := d.DB()
 	//设置连接池
@@ -26,5 +25,5 @@ func LinkMysqlDB() {
 	sqlDb.SetMaxOpenConns(global.Config.Mysql.MaxOpen) //设置最大的空闲连接数
 
 	global.Mydb = d
-	fmt.Println("成功连接mysql数据库")
+	global.SugarLog.Info("成功连接mysql数据库")
 }

@@ -2,10 +2,8 @@ package core
 
 import (
 	"context"
-	"fmt"
 	"github.com/redis/go-redis/v9"
 	"img/server/global"
-	"log"
 	"time"
 )
 
@@ -22,8 +20,8 @@ func LinkRedisDB() {
 	defer cancel()
 	_, err := rdb.Ping(ctx).Result()
 	if err != nil {
-		log.Panicf("redis数据库连接失败%v\n", err)
+		global.SugarLog.Fatalf("redis数据库连接失败%v\n", err)
 	}
 	global.Redb = rdb
-	fmt.Println("成功连接redis数据库")
+	global.SugarLog.Info("成功连接redis数据库")
 }
