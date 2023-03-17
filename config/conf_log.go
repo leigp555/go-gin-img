@@ -8,5 +8,4 @@ type Logger struct {
 	Compress   bool   `yaml:"compress"`
 	ShowLine   bool   `yaml:"showLine"`
 	Level      string `yaml:"level"`
-	Prefix     string `yaml:"prefix"`
 }

@@ -26,13 +26,13 @@ func InitLogger() {
 	// 开启文件及行号
 	development := zap.Development()
 	// 设置初始化字段,如：添加一个服务器名称
-	filed := zap.Fields(zap.String("user", logConf.Prefix))
+	//filed := zap.Fields(zap.String("user", logConf.Prefix))
 	// 构造日志
 	var logger *zap.Logger
 	if logConf.ShowLine {
-		logger = zap.New(core, caller, development, filed)
+		logger = zap.New(core, caller, development)
 	} else {
-		logger = zap.New(core, caller, filed)
+		logger = zap.New(core, caller)
 	}
 	global.Logger = logger
 	global.SugarLog = logger.Sugar()
