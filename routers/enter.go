@@ -2,6 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"img/server/middleware"
 )
 
@@ -14,7 +16,8 @@ func InitRouter(r *gin.Engine) {
 	r.Use(middleware.Cors())
 	//配置路由路口
 	g := r.Group("v1/api")
-
+	//swagger路由
+	g.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
 	{
