@@ -6,4 +6,5 @@ type Config struct {
 	Token  Token  `yaml:"token"`
 	Logger Logger `yaml:"logger"`
 	System System `yaml:"system"`
+	Gin    Gin    `yaml:"gin"`
 }

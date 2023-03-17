@@ -16,6 +16,7 @@ import (
 func StartServer() {
 	//获取系统配置文件
 	sysConf := global.Config.System
+	ginConf := global.Config.Gin
 	//gin配置log文件
 	f, err := os.OpenFile("log/gin/log", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
@@ -23,7 +24,7 @@ func StartServer() {
 	}
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	//设置开发模式
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(ginConf.Mode)
 	//初始化gin
 	r := gin.Default()
 	//初始化路由
