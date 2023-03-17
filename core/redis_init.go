@@ -9,10 +9,9 @@ import (
 	"time"
 )
 
-var redisConf = global.Config.Redis
-
 // LinkRedisDB 连接redis数据库
 func LinkRedisDB() {
+	var redisConf = global.Config.Redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redisConf.Addr,
 		Password: redisConf.Password,

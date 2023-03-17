@@ -9,11 +9,10 @@ import (
 	"log"
 )
 
-// 获取mysql的配置
-var mysqlConf = global.Config.Mysql
-
 // LinkMysqlDB LinkDB 连接mysql数据库
 func LinkMysqlDB() {
+	// 获取mysql的配置
+	var mysqlConf = global.Config.Mysql
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True", mysqlConf.Username, mysqlConf.Password, mysqlConf.Addr, mysqlConf.DB)
 	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info), //配置一个日志
