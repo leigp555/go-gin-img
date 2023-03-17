@@ -16,7 +16,7 @@ system:
   env: "dev"
 token:
   signingKey: "e199ad17-c090-43cb-b095-1dc55c209a77"
-  expiresTime: time.Now().Add(1000 * time.Second)
+  expiresTime: 604800
 logger:
   filename: "log/zap/log.txt"
   maxSize: 1

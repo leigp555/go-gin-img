@@ -19,7 +19,7 @@ func GenerateToken(username string) (tokenStr string, err error) {
 	claims := MyCustomClaims{
 		username,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(tokenConf.ExpiresTime), //过期时间
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(tokenConf.ExpiresTime) * time.Second)), //过期时间
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    "test",     //颁发者
