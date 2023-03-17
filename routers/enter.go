@@ -20,5 +20,14 @@ func InitRouter(r *gin.Engine) {
 	{
 		apiRouterGroup.UserRouter(userGroup)
 	}
-
+	//注册文章相关的路由
+	articleGroup := g.Group("/article")
+	{
+		apiRouterGroup.ArticleRouter(articleGroup)
+	}
+	//注册图片相关的路由
+	imageGroup := g.Group("/img")
+	{
+		apiRouterGroup.ImgRouter(imageGroup)
+	}
 }

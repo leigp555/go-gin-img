@@ -8,7 +8,7 @@ import (
 func (ApiRouterGroup) UserRouter(r *gin.RouterGroup) {
 
 	r.GET("", func(c *gin.Context) {
-		c.JSON(200, gin.H{"name": "index"})
+		c.JSON(200, gin.H{"name": "article"})
 	})
 	r.GET("/login", api.GroupApi.UserApi.UserLogin)
 	r.GET("/register", api.GroupApi.UserApi.UserRegister)
