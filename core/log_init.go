@@ -4,13 +4,16 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"img/server/config"
 	"img/server/global"
 )
 
-var logConf = global.Config.Logger
-var sysConf = global.Config.System
+var logConf config.Logger
+var sysConf config.System
 
 func InitLogger() {
+	logConf = global.Config.Logger
+	sysConf = global.Config.System
 	writeSyncer := getLogWriter()
 	encoder := getEncoder()
 	level := getLogLevel()
