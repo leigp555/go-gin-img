@@ -4,11 +4,11 @@ mysql:
   password: "lgp123456",
   maxConn: 200,
   maxOpen: 100,
-  dB: "img"
+  db: "img"
 redis:
   addr: "1.117.141.66:6379",
   password: "123456abc",
-  dB: 0,
+  db: 0,
   poolSize: 50,
 system:
   host: "0.0.0.0",
