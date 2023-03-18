@@ -32,6 +32,20 @@ func InitRouter(r *gin.Engine) {
 
 			}
 		})
+		g.GET("captcha", func(c *gin.Context) {
+			id, captcha, err := utils.Captcha.Generate()
+			if err != nil {
+				c.JSON(500, gin.H{"code": 500, "errors": map[string]any{"body": []string{"服务器异常，请重试"}}})
+			}
+			c.JSON(200, gin.H{"code": 200, "msg": "验证码获取成功", "data": map[string]any{"captchaId": id, "captchaImg": captcha}})
+		})
+		g.GET("captcha/verify", func(c *gin.Context) {
+			b := utils.Captcha.Verify("nfXqRGroMgKrYGmDGSqA", "6360")
+			if b == false {
+				c.JSON(500, gin.H{"code": 500, "errors": map[string]any{"body": []string{"验证码解析失败"}}})
+			}
+			c.JSON(200, gin.H{"code": 200, "msg": "验证码获取成功", "data": map[string]any{"msg": "验证码解析成功"}})
+		})
 	}
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
