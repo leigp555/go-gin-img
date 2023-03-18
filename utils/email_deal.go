@@ -6,7 +6,11 @@ import (
 	"net/smtp"
 )
 
-func SendEmail(emailNumber []string, randStr string) (err error) {
+type E struct{}
+
+var Email = new(E)
+
+func (E) Send(emailNumber []string, randStr string) (err error) {
 	e := email.NewEmail()
 	//设置发送方的邮箱
 	e.From = "907090585@qq.com"

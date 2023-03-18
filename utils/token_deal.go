@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"img/server/global"
 	"time"
@@ -13,8 +12,12 @@ type MyCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-// GenerateToken 生成token
-func GenerateToken(username string) (tokenStr string, err error) {
+type T struct{}
+
+var Token = T{}
+
+// Generate  生成token
+func (T) Generate(username string) (tokenStr string, err error) {
 	tokenConf := global.Config.Token
 	claims := MyCustomClaims{
 		username,
@@ -27,7 +30,6 @@ func GenerateToken(username string) (tokenStr string, err error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	fmt.Println(token)
 	tokenStr, err = token.SignedString([]byte(tokenConf.SigningKey))
 	if err != nil {
 		return "", err
@@ -35,7 +37,7 @@ func GenerateToken(username string) (tokenStr string, err error) {
 	return tokenStr, err
 }
 
-func ParseToken(tokenStr string) (userId string, err error) {
+func (T) Parse(tokenStr string) (userId string, err error) {
 	tokenConf := global.Config.Token
 	token, _ := jwt.ParseWithClaims(tokenStr, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(tokenConf.SigningKey), nil

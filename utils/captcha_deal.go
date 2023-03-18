@@ -4,6 +4,8 @@ import (
 	"github.com/mojocn/base64Captcha"
 )
 
+type Captcha struct{}
+
 // configJsonBody json request body.
 type configJsonBody struct {
 	Id            string
@@ -18,8 +20,8 @@ type configJsonBody struct {
 
 var store = base64Captcha.DefaultMemStore
 
-// GetCaptcha 生成验证码
-func GetCaptcha() (string, string, error) {
+// Generate  生成验证码
+func (Captcha) Generate() (string, string, error) {
 	var param = configJsonBody{
 		Id:          "",
 		CaptchaType: "",
@@ -64,7 +66,7 @@ func GetCaptcha() (string, string, error) {
 	return c.Generate()
 }
 
-// VerifyCaptcha 解析验证码
-func VerifyCaptcha(id, VerifyValue string) bool {
+// Verify  解析验证码
+func (Captcha) Verify(id, VerifyValue string) bool {
 	return store.Verify(id, VerifyValue, true)
 }

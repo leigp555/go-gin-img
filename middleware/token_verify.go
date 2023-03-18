@@ -24,7 +24,7 @@ func TokenVerify() gin.HandlerFunc {
 		splitArr := strings.Split(tokenHeader, " ")
 		tokenStr := splitArr[1]
 		//解析token 解析失败阻止后续中间件执行
-		userId, err2 := utils.ParseToken(tokenStr)
+		userId, err2 := utils.Token.Parse(tokenStr)
 		if err2 != nil {
 			c.JSON(403, gin.H{"msg": "用户身份过期,请重新登录"})
 			c.Abort()

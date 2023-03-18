@@ -1,10 +1,12 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"img/server/middleware"
+	"img/server/utils"
 )
 
 type ApiRouterGroup struct{}
@@ -20,6 +22,16 @@ func InitRouter(r *gin.Engine) {
 	//swagger路由
 	{
 		g.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		g.GET("/email", func(c *gin.Context) {
+			err := utils.Email.Send([]string{"122974945@qq.com"}, "123456")
+			if err != nil {
+				fmt.Println("email发送失败")
+				c.JSON(500, gin.H{"msg": "邮件发送失败请重试"})
+			} else {
+				c.JSON(200, gin.H{"msg": "邮件已发送请注意查收"})
+
+			}
+		})
 	}
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
