@@ -1,9 +1,24 @@
 package main
 
 import (
+	"img/server/core"
 	_ "img/server/docs"
+	"img/server/models"
 	"img/server/service"
 )
+
+func init() {
+	//初始化配置
+	core.InitConf()
+	//初始化日志
+	core.InitLogger()
+	//初始化mysql
+	core.LinkMysqlDB()
+	//初始化redis
+	core.LinkRedisDB()
+	//生成mysql表
+	models.CreateTables()
+}
 
 // @title           Swagger Example API
 // @version         2.0

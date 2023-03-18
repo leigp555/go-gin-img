@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"img/server/core"
 	"img/server/global"
-	"img/server/models"
 	"img/server/routers"
 	"io"
 	"net/http"
@@ -14,19 +12,6 @@ import (
 	"os/signal"
 	"time"
 )
-
-func init() {
-	//初始化配置
-	core.InitConf()
-	//初始化日志
-	core.InitLogger()
-	//初始化mysql
-	core.LinkMysqlDB()
-	//初始化redis
-	core.LinkRedisDB()
-	//生成mysql表
-	models.CreateTables()
-}
 
 func StartServer() {
 	//获取系统配置文件
