@@ -50,6 +50,24 @@ func InitRouter(r *gin.Engine) {
 			s := utils.Md5Str("23456778")
 			c.JSON(200, gin.H{"code": 200, "msg": "md5", "data": s})
 		})
+		g.GET("token", func(c *gin.Context) {
+			token, err := utils.Token.Generate("lgp")
+			if err != nil {
+				c.JSON(500, gin.H{"code": 500, "errors": map[string]any{"body": []string{"服务器异常,请稍后再试"}}})
+				return
+			}
+			c.JSON(200, gin.H{"code": 200, "msg": "md5", "token": token})
+		})
+		g.GET("token/verify", func(c *gin.Context) {
+			t := c.Query("token")
+			username, err := utils.Token.Parse(t)
+			if err != nil {
+				c.JSON(500, gin.H{"code": 500, "errors": map[string]any{"body": []string{"服务器异常,请稍后再试"}}})
+				return
+			}
+			c.JSON(200, gin.H{"code": 200, "msg": "token", "username": username})
+		})
+
 	}
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
