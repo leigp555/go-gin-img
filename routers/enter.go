@@ -46,6 +46,10 @@ func InitRouter(r *gin.Engine) {
 			}
 			c.JSON(200, gin.H{"code": 200, "msg": "验证码获取成功", "data": map[string]any{"msg": "验证码解析成功"}})
 		})
+		g.GET("md5", func(c *gin.Context) {
+			s := utils.Md5Str("23456778")
+			c.JSON(200, gin.H{"code": 200, "msg": "md5", "data": s})
+		})
 	}
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
