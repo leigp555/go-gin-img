@@ -10,7 +10,8 @@ func GetValidMsg(err error, obj any) string {
 	// 使用的时候，需要传obj的指针
 	getObj := reflect.TypeOf(obj)
 	// 将err接口断言为具体类型
-	if errs, ok := err.(validator.ValidationErrors); ok {
+	errs, ok := err.(validator.ValidationErrors)
+	if ok {
 		// 断言成功
 		for _, e := range errs {
 			// 循环每一个错误信息
@@ -18,9 +19,10 @@ func GetValidMsg(err error, obj any) string {
 			if f, exits := getObj.Elem().FieldByName(e.Field()); exits {
 				msg := f.Tag.Get("msg")
 				return msg
+			} else {
+				return err.Error()
 			}
 		}
 	}
-
 	return err.Error()
 }

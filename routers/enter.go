@@ -19,9 +19,8 @@ func InitRouter(r *gin.Engine) {
 	//配置路由路口
 	g := r.Group("v1/api")
 
-	//swagger路由
+	//测试路由
 	{
-		g.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		g.GET("/email", func(c *gin.Context) {
 			err := utils.Email.Send([]string{"122974945@qq.com"}, "123456")
 			if err != nil {
@@ -67,8 +66,35 @@ func InitRouter(r *gin.Engine) {
 			}
 			c.JSON(200, gin.H{"code": 200, "msg": "token", "username": username})
 		})
-
 	}
+	//swagger路由
+	{
+		g.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
+
+	//用户登录注册路由
+	type NewUserInfo struct {
+		Username         string `form:"username" binding:"required,min=1,max=20" msg:"用户名不能为空,且长度为1~20位"`
+		Email            string `form:"email" binding:"required,email" msg:"请输入正确的邮箱"`
+		EmailCaptchaCode string `form:"emailCaptcha" binding:"required,len=6" msg:"邮箱验证码不正确"`
+		Password         string `form:"password" binding:"required,min=6,max=12" msg:"密码不能为空,且长度为6~12位"`
+		RePassword       string `form:"rePassword" binding:"required,min=6,max=12,eqfield=Password" msg:"两次输入的密码不一致"`
+		ImgCaptchaId     string `form:"imgCaptchaId" binding:"required" msg:"图形验证码不正确"`
+		ImgCaptcha       string `form:"imgCaptcha" binding:"required" msg:"图形验证码不正确"`
+	}
+	{
+		g.POST("register", func(c *gin.Context) {
+			var newUserInfo NewUserInfo
+			err := c.ShouldBind(&newUserInfo)
+			if err != nil {
+				msg := utils.GetValidMsg(err, &newUserInfo)
+				c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": msg}})
+				return
+			}
+			c.JSON(200, gin.H{"code": 200, "msg": "注册成功", "body": newUserInfo})
+		})
+	}
+
 	//注册用户相关的路由
 	userGroup := g.Group("/user")
 	{
