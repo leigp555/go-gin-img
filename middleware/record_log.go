@@ -31,8 +31,6 @@ func Log() gin.HandlerFunc {
 		referer := c.Request.Referer()
 		requestSize := c.Request.ContentLength
 		responseSize := c.Writer.Size()
-
-		global.GinSugarLog.Infof("request_id:%v,start_time:%v,latency:%v,method:%v,url:%v,status:%v,ip:%v,user_agent:%v,referer:%v,request_size:%v,response_size:%v", requestId, startTime, latencyTime, reqMethod, reqUri, resStatusCode, reqClientIp, useAgent, referer, requestSize, responseSize)
-
+		global.GinSugarLog.Infof("\nrequest_id:%v,start_time:%v,latency:%v,method:%v,url:%v,status:%v,ip:%v,user_agent:%v,referer:%v,request_size:%v,response_size:%v\n", requestId, startTime, latencyTime, reqMethod, reqUri, resStatusCode, reqClientIp, useAgent, referer, requestSize, responseSize)
 	}
 }

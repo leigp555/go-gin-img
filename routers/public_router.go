@@ -14,8 +14,9 @@ func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
 	}
 	//登录&注册
 	{
+		r.POST("/register", api.GroupApi.PublicApi.Register)
 		r.GET("/login", api.GroupApi.PublicApi.Login)
-		r.GET("/register", api.GroupApi.PublicApi.Register)
+
 	}
 
 }
