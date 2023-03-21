@@ -15,7 +15,7 @@ var apiRouterGroup = new(ApiRouterGroup)
 
 func InitRouter(r *gin.Engine) {
 	//添加全局跨域中间件
-	r.Use(middleware.Cors())
+	r.Use(middleware.Cors(), middleware.Log())
 	//配置路由路口
 	g := r.Group("v1/api")
 

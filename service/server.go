@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"img/server/global"
 	"img/server/routers"
-	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -17,16 +16,11 @@ func StartServer() {
 	//获取系统配置文件
 	sysConf := global.Config.System
 	ginConf := global.Config.Gin
-	//gin配置log文件
-	f, err := os.OpenFile("log/gin/log", os.O_RDWR|os.O_APPEND|os.O_CREATE, 0755)
-	if err != nil {
-		global.SugarLog.Error("gin日志创建失败")
-	}
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	//设置开发模式
-	gin.SetMode(ginConf.Mode)
+
 	//初始化gin
+	//设置开发模式
 	r := gin.Default()
+	gin.SetMode(ginConf.Mode)
 	//初始化路由
 	routers.InitRouter(r)
 	//监听端口
@@ -38,7 +32,7 @@ func StartServer() {
 	//服务启停
 	go func() {
 		// 服务连接
-		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			global.SugarLog.Fatalf("listen: %s\n", err)
 		}
 	}()

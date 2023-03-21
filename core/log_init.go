@@ -11,14 +11,21 @@ import (
 
 var logConf config.Logger
 var sysConf config.System
+var ginConf config.Gin
 
 func InitLogger() {
 	logConf = global.Config.Logger
 	sysConf = global.Config.System
+	ginConf = global.Config.Gin
+	initSysLog()
+	initGinLog()
+}
 
-	writeSyncer := getLogWriter()
+// 配置系统日志
+func initSysLog() {
+	writeSyncer := getLogWriter(logConf.Filename, logConf.MaxSize, logConf.MaxBackups, logConf.MaxAge, logConf.Compress)
 	encoder := getEncoder()
-	level := getLogLevel()
+	level := getLogLevel(logConf.Level)
 	core := zapcore.NewCore(encoder, writeSyncer, level)
 
 	// 开启开发模式，堆栈跟踪
@@ -36,6 +43,30 @@ func InitLogger() {
 	}
 	global.Logger = logger
 	global.SugarLog = logger.Sugar()
+}
+
+// 配置gin日志
+func initGinLog() {
+	writeSyncer := getLogWriter(ginConf.Logger.Filename, ginConf.Logger.MaxSize, ginConf.Logger.MaxBackups, ginConf.Logger.MaxAge, ginConf.Logger.Compress)
+	encoder := getEncoder()
+	level := getLogLevel(ginConf.Logger.Level)
+	core := zapcore.NewCore(encoder, writeSyncer, level)
+
+	// 开启开发模式，堆栈跟踪
+	caller := zap.AddCaller()
+	// 开启文件及行号
+	development := zap.Development()
+	// 设置初始化字段,如：添加一个服务器名称
+	//filed := zap.Fields(zap.String("user", logConf.Prefix))
+	// 构造日志
+	var logger *zap.Logger
+	if ginConf.Logger.ShowLine {
+		logger = zap.New(core, caller, development)
+	} else {
+		logger = zap.New(core, caller)
+	}
+	global.Logger = logger
+	global.GinSugarLog = logger.Sugar()
 }
 
 func getEncoder() zapcore.Encoder {
@@ -65,14 +96,13 @@ func getEncoder() zapcore.Encoder {
 	}
 
 }
-
-func getLogWriter() zapcore.WriteSyncer {
+func getLogWriter(f string, ms int, mb int, ma int, cp bool) zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
-		Filename:   logConf.Filename,
-		MaxSize:    logConf.MaxSize,
-		MaxBackups: logConf.MaxBackups,
-		MaxAge:     logConf.MaxAge,
-		Compress:   logConf.Compress,
+		Filename:   f,
+		MaxSize:    ms,
+		MaxBackups: mb,
+		MaxAge:     ma,
+		Compress:   cp,
 	}
 	if global.Config.System.Env == "dev" {
 		return zapcore.AddSync(os.Stderr) //开发模式下输出到控制台
@@ -81,10 +111,9 @@ func getLogWriter() zapcore.WriteSyncer {
 	}
 	//return zapcore.NewMultiWriteSyncer(syncFile, syncConsole)  //既输出到文件又输出到控制台
 }
-
-func getLogLevel() zapcore.Level {
+func getLogLevel(l string) zapcore.Level {
 	var level zapcore.Level
-	switch logConf.Level {
+	switch l {
 	case "debug":
 		level = zap.DebugLevel
 	case "info":
