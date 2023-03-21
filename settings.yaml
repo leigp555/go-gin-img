@@ -13,12 +13,12 @@ redis:
 system:
   host: "0.0.0.0"
   port: "8080"
-  env: "pro"
+  env: "dev"
 token:
   signingKey: "e199ad17-c090-43cb-b095-1dc55c209a77"
   expiresTime: 604800
 logger:
-  filename: "log/system/log.txt"
+  filename: "log/system/log"
   maxSize: 1
   maxBackups: 5
   maxAge: 30
