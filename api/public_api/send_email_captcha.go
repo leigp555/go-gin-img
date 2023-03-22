@@ -14,12 +14,12 @@ import (
 
 func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 	type Email struct {
-		Email string `json:"email" binding:"required,email" msg:"邮箱格式不正确"`
+		Email string `form:"email" binding:"required,email" msg:"邮箱格式不正确"`
 	}
 	var userEmail Email
 	rdb := global.Redb
 	//json验证
-	err := c.ShouldBindJSON(&userEmail)
+	err := c.ShouldBind(&userEmail)
 	if err != nil {
 		msg := utils.GetValidMsg(err, &userEmail)
 		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{msg}}})

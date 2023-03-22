@@ -66,17 +66,20 @@ func InitRouter(r *gin.Engine) {
 		})
 	}
 
-	//注册公共路由
+	//注册公共路由（访问不需要提供token）
 	{
 		apiRouterGroup.PublicRouter(g)
 	}
+
+	//私有路由（访问需要提供token）
+	gr := g.Group("", middleware.TokenVerify())
 	//注册用户相关的路由
-	userGroup := g.Group("/user")
+	userGroup := gr.Group("/user")
 	{
 		apiRouterGroup.UserRouter(userGroup)
 	}
 	//注册图片相关的路由
-	imageGroup := g.Group("/img")
+	imageGroup := gr.Group("/img")
 	{
 		apiRouterGroup.ImgRouter(imageGroup)
 	}

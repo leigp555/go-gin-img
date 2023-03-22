@@ -12,11 +12,15 @@ func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
 	{
 		r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
+	//验证码发送
+	{
+		r.GET("/imgCaptcha", api.GroupApi.PublicApi.SendImgCaptcha)
+		r.GET("/emailCaptcha", api.GroupApi.PublicApi.SendEmailCaptcha)
+	}
 	//登录&注册
 	{
 		r.POST("/register", api.GroupApi.PublicApi.Register)
 		r.GET("/login", api.GroupApi.PublicApi.Login)
-
 	}
 
 }
