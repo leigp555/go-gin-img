@@ -56,7 +56,9 @@ func (PublicApi) Register(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": "用户已存在"}})
 		return
 	}
+	//将密码md5
+	s := utils.Md5Str(newUserInfo.Password)
+	newUserInfo.Password = s
 	//注册成功，返回客户端
 	c.JSON(200, gin.H{"code": 200, "msg": "注册成功", "body": newUserInfo})
-
 }
