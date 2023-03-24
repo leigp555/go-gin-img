@@ -65,7 +65,6 @@ func initGinLog() {
 	} else {
 		logger = zap.New(core, caller)
 	}
-	global.Logger = logger
 	global.GinSugarLog = logger.Sugar()
 }
 
