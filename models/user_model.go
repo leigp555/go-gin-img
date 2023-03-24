@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 	"img/server/global"
 )
@@ -16,7 +15,6 @@ type User struct {
 func (User) Generate() {
 	var db = global.Mydb
 	err := db.AutoMigrate(&User{})
-	fmt.Printf("我是db%v", db)
 	if err != nil {
 		global.SugarLog.Panicln("User表创建失败")
 	}

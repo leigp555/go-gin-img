@@ -16,12 +16,12 @@ func StartServer() {
 	//获取系统配置文件
 	sysConf := global.Config.System
 	ginConf := global.Config.Gin
-
+	gin.SetMode(ginConf.Mode)
 	//初始化gin
 	//设置开发模式
 	r := gin.New()
 	r.Use(gin.Logger())
-	gin.SetMode(ginConf.Mode)
+
 	//初始化路由
 	routers.InitRouter(r)
 	//监听端口

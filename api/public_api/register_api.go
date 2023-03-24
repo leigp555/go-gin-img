@@ -23,7 +23,6 @@ func (PublicApi) Register(c *gin.Context) {
 	var newUserInfo NewUserInfo
 	rdb := global.Redb
 	mdb := global.Mydb
-
 	//验证数据绑定
 	err := c.ShouldBind(&newUserInfo)
 	if err != nil {
@@ -31,6 +30,7 @@ func (PublicApi) Register(c *gin.Context) {
 		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": msg}})
 		return
 	}
+
 	//验证图形验证码
 	b := utils.Captcha.Verify(newUserInfo.ImgCaptchaId, newUserInfo.ImgCaptcha)
 	if b == false {
@@ -59,6 +59,13 @@ func (PublicApi) Register(c *gin.Context) {
 	//将密码md5
 	s := utils.Md5Str(newUserInfo.Password)
 	newUserInfo.Password = s
+	//保存到数据库
+	mdb.Create(&models.User{
+		Username: newUserInfo.Username,
+		Email:    newUserInfo.Email,
+		Password: newUserInfo.Password,
+	})
+
 	//注册成功，返回客户端
 	c.JSON(200, gin.H{"code": 200, "msg": "注册成功", "body": newUserInfo})
 }
