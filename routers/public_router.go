@@ -15,7 +15,7 @@ func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
 	//验证码发送
 	{
 		r.GET("/imgCaptcha", api.GroupApi.PublicApi.SendImgCaptcha)
-		r.GET("/emailCaptcha", api.GroupApi.PublicApi.SendEmailCaptcha)
+		r.POST("/emailCaptcha", api.GroupApi.PublicApi.SendEmailCaptcha)
 	}
 	//登录&注册
 	{

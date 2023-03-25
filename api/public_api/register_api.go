@@ -25,8 +25,7 @@ func (PublicApi) Register(c *gin.Context) {
 	rdb := global.Redb
 	mdb := global.Mydb
 	//验证数据绑定
-	err := c.ShouldBind(&newUserInfo)
-	if err != nil {
+	if err := c.ShouldBind(&newUserInfo); err != nil {
 		msg := utils.GetValidMsg(err, &newUserInfo)
 		c.JSON(400, gin.H{"code": 400, "msg": msg})
 		return

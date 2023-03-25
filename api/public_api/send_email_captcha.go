@@ -19,10 +19,9 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 	var userEmail Email
 	rdb := global.Redb
 	//json验证
-	err := c.ShouldBind(&userEmail)
-	if err != nil {
+	if err := c.ShouldBind(&userEmail); err != nil {
 		msg := utils.GetValidMsg(err, &userEmail)
-		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{msg}}})
+		c.JSON(400, gin.H{"code": 400, "msg": msg})
 		return
 	}
 	//生成随机数
@@ -33,17 +32,16 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 	randStr := fmt.Sprintf(strings.Join(arr, ""))
 	//存入redis
 	var ctx = context.Background()
-	err = rdb.Set(ctx, userEmail.Email, randStr, 300*time.Second).Err()
-	if err != nil {
-		c.JSON(500, gin.H{"code": 500, "errors": map[string]any{"body": []string{"服务器异常请重试"}}})
+	if err := rdb.Set(ctx, userEmail.Email, randStr, 300*time.Second).Err(); err != nil {
+		utils.DealErr(c, err, "redis邮箱验证码存储失败")
 		return
 	}
 	//发送验证码
-	err = utils.Email.Send([]string{userEmail.Email}, randStr)
-	if err != nil {
-		fmt.Println("email发送失败")
-		c.JSON(500, gin.H{"msg": "邮件发送失败请重试"})
-	} else {
-		c.JSON(200, gin.H{"msg": "邮件已发送请注意查收"})
+	if err := utils.Email.Send([]string{userEmail.Email}, randStr); err != nil {
+		utils.DealErr(c, err, "邮件发送失败")
+		return
 	}
+	//验证码发送成功的响应
+	c.JSON(200, gin.H{"code": "200", "msg": "邮件已发送请注意查收"})
+
 }
