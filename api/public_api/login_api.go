@@ -20,37 +20,34 @@ func (PublicApi) Login(c *gin.Context) {
 	}
 	var userInfo user
 	mdb := global.Mydb
+	res := utils.Res
 	//验证json数据绑定
 	if err := c.ShouldBind(&userInfo); err != nil {
 		msg := utils.GetValidMsg(err, &userInfo)
-		c.JSON(400, gin.H{"code": 400, "msg": msg})
+		res.Fail.Normal(c, 400, msg)
 		return
 	}
 	//检查图形验证码
 	isRight := utils.Captcha.Verify(userInfo.CaptchaId, userInfo.CaptchaCode)
 	if !isRight {
-		c.JSON(400, gin.H{"code": 400, "msg": "验证码不正确"})
+		res.Fail.Normal(c, 400, "验证码不正确")
 		return
 	}
 	//根据用户名密码查询数据库
 	var u = models.User{}
 	if err := mdb.Where("username = ?", userInfo.Username).First(&u).Error; err != nil {
-		utils.DealErr(c, err, "/public_api/login 登录用户查询失败")
-		return
-	}
-	if u.Username != userInfo.Username {
-		c.JSON(400, gin.H{"code": 400, "msg": "用户名不存在,请先注册"})
+		res.Fail.Normal(c, 400, "用户名不存在,请先注册")
 		return
 	}
 	//验证密码
 	if u.Password != utils.Md5Str(userInfo.Password) {
-		c.JSON(400, gin.H{"code": 400, "msg": "密码错误"})
+		res.Fail.Normal(c, 400, "密码错误")
 		return
 	}
 	//生成token
 	token, err := utils.Token.Generate(strconv.Itoa(int(u.ID)))
 	if err != nil {
-		utils.DealErr(c, err, "/public_api/login 生成token失败")
+		res.Fail.Error(c, err, "/public_api/login 生成token失败")
 		return
 	}
 	type ResponseContent struct {
@@ -72,5 +69,5 @@ func (PublicApi) Login(c *gin.Context) {
 		RequestId: requestId.(string),
 		UpdateAt:  u.UpdatedAt,
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": "登录成功", "data": responseContent})
+	res.Success.Normal(c, "登录成功", responseContent)
 }

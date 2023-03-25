@@ -18,10 +18,11 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 	}
 	var userEmail Email
 	rdb := global.Redb
+	res := utils.Res
 	//json验证
 	if err := c.ShouldBind(&userEmail); err != nil {
 		msg := utils.GetValidMsg(err, &userEmail)
-		c.JSON(400, gin.H{"code": 400, "msg": msg})
+		res.Fail.Normal(c, 400, msg)
 		return
 	}
 	//生成随机数
@@ -33,20 +34,14 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 	//存入redis
 	var ctx = context.Background()
 	if err := rdb.Set(ctx, userEmail.Email, randStr, 300*time.Second).Err(); err != nil {
-		utils.DealErr(c, err, "redis邮箱验证码存储失败")
+		res.Fail.Error(c, err, "redis邮箱验证码存储失败")
 		return
 	}
 	//发送验证码
 	if err := utils.Email.Send([]string{userEmail.Email}, randStr); err != nil {
-		utils.DealErr(c, err, "邮件发送失败")
+		res.Fail.Error(c, err, "邮件发送失败")
 		return
 	}
-	requestId, exist := c.Get("requestId")
-	if !exist {
-		requestId = "0"
-		global.SugarLog.Warn("上下文获取requestId失败")
-	}
 	//验证码发送成功的响应
-	c.JSON(200, gin.H{"code": "200", "msg": "邮件已发送请注意查收", "requestId": requestId})
-
+	res.Success.WidthMsg(c, "邮箱验证码发送成功")
 }

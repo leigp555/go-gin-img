@@ -24,43 +24,37 @@ func (PublicApi) Register(c *gin.Context) {
 	var newUserInfo NewUserInfo
 	rdb := global.Redb
 	mdb := global.Mydb
+	res := utils.Res
 	//验证数据绑定
 	if err := c.ShouldBind(&newUserInfo); err != nil {
 		msg := utils.GetValidMsg(err, &newUserInfo)
-		c.JSON(400, gin.H{"code": 400, "msg": msg})
+		res.Fail.Normal(c, 400, msg)
 		return
 	}
 
 	//验证图形验证码
 	b := utils.Captcha.Verify(newUserInfo.ImgCaptchaId, newUserInfo.ImgCaptcha)
 	if b == false {
-		c.JSON(400, gin.H{"code": 400, "msg": "图形验证码错误"})
+		res.Fail.Normal(c, 400, "图形验证码错误")
 		return
 	}
 	//验证email验证码
 	var ctx = context.Background()
 	val, err := rdb.Get(ctx, newUserInfo.Email).Result()
-	if err != nil {
-		utils.DealErr(c, err, "redis获取数据失败")
-		return
-	}
-	if val != newUserInfo.EmailCaptchaCode {
-		c.JSON(400, gin.H{"code": 400, "msg": "邮箱验证码错误"})
+	if err != nil || val != newUserInfo.EmailCaptchaCode {
+		res.Fail.Normal(c, 400, "邮箱验证码错误")
 		return
 	}
 	//查询邮箱或者用户名是否已经被使用
 	var u = models.User{}
-	if err = mdb.Where("email = ?", newUserInfo.Email).Or("username=?", newUserInfo.Username).Find(&u).Error; err != nil {
-		utils.DealErr(c, err, "邮箱查询数据库失败")
-		return
-	}
+	mdb.Where("email = ?", newUserInfo.Email).Or("username=?", newUserInfo.Username).Find(&u)
 	if u.Email == newUserInfo.Email {
-		c.JSON(400, gin.H{"code": 400, "msg": "邮箱已绑定"})
+		res.Fail.Normal(c, 400, "邮箱已绑定")
 		return
 	}
 	//查询用户名是否已存在
 	if u.Username == newUserInfo.Username {
-		c.JSON(400, gin.H{"code": 400, "msg": "用户名已存在"})
+		res.Fail.Normal(c, 400, "用户名已存在")
 		return
 	}
 	//将密码md5
@@ -73,28 +67,21 @@ func (PublicApi) Register(c *gin.Context) {
 		Password: newUserInfo.Password,
 	}
 	if err = mdb.Create(&newUser).Error; err != nil {
-		utils.DealErr(c, err, "写入数据库失败，用户注册不成功")
+		res.Fail.Error(c, err, "写入数据库失败，用户注册不成功")
 		return
 	}
 	//注册成功，返回客户端
-	requestId, exist := c.Get("requestId")
-	if !exist {
-		requestId = "0"
-		global.SugarLog.Warn("上下文获取requestId失败")
-	}
 	type ResponseContent struct {
 		Username  string    `json:"username"`
 		Email     string    `json:"email"`
-		RequestId string    `json:"requestId"`
 		CreatedAt time.Time `json:"createdAt"`
 		UpdatedAt time.Time `json:"updatedAt"`
 	}
 	responseContent := ResponseContent{
 		Username:  newUser.Username,
 		Email:     newUser.Email,
-		RequestId: requestId.(string),
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": "注册成功", "data": responseContent})
+	res.Success.Normal(c, "注册成功", responseContent)
 }
