@@ -41,7 +41,12 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 		utils.DealErr(c, err, "邮件发送失败")
 		return
 	}
+	requestId, exist := c.Get("requestId")
+	if !exist {
+		requestId = "0"
+		global.SugarLog.Warn("上下文获取requestId失败")
+	}
 	//验证码发送成功的响应
-	c.JSON(200, gin.H{"code": "200", "msg": "邮件已发送请注意查收"})
+	c.JSON(200, gin.H{"code": "200", "msg": "邮件已发送请注意查收", "requestId": requestId})
 
 }
