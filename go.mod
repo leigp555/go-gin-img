@@ -64,5 +64,4 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	moul.io/zapgorm2 v1.3.0 // indirect
 )
