@@ -17,8 +17,8 @@ func (PublicApi) Register(c *gin.Context) {
 		EmailCaptchaCode string `form:"emailCaptcha" binding:"required,len=6" msg:"邮箱验证码不正确"`
 		Password         string `form:"password" binding:"required,min=6,max=12" msg:"密码不能为空,且长度为6~12位"`
 		RePassword       string `form:"rePassword" binding:"required,min=6,max=12,eqfield=Password" msg:"两次输入的密码不一致"`
-		ImgCaptchaId     string `form:"imgCaptchaId" binding:"required" msg:"图形验证码ID未获取"`
-		ImgCaptcha       string `form:"imgCaptcha" binding:"required" msg:"图形验证码未获取"`
+		ImgCaptchaId     string `form:"imgCaptchaId" binding:"required" msg:"图形验证码ID不能为空"`
+		ImgCaptcha       string `form:"imgCaptcha" binding:"required" msg:"图形验证码不正确"`
 	}
 
 	var newUserInfo NewUserInfo
