@@ -13,20 +13,18 @@ import (
 func (PublicApi) Login(c *gin.Context) {
 	//数据绑定
 	type user struct {
-		User struct {
-			Email    string `json:"email" binding:"required,email" msg:"请输入正确的邮箱"`
-			Password string `json:"password" binding:"required,min=6,max=12" msg:"密码不能为空,且长度为6~12位"`
-		} `json:"user"`
-		CaptchaId   string `json:"captcha_id" binding:"required" msg:"图形验证码不正确"`
-		CaptchaCode string `json:"captcha_code" binding:"required" msg:"图形验证码不正确"`
+		Username    string `form:"username" binding:"required,min=1,max=20" msg:"用户名不能为空,且长度为1~20位"`
+		Password    string `form:"password" binding:"required,min=6,max=12" msg:"密码不能为空,且长度为6~12位"`
+		CaptchaId   string `form:"imgCaptchaId" binding:"required" msg:"图形验证码不正确"`
+		CaptchaCode string `form:"imgCaptcha" binding:"required" msg:"图形验证码不正确"`
 	}
 	var userInfo user
 	mdb := global.Mydb
 	//验证json数据绑定
-	err := c.ShouldBindJSON(&userInfo)
+	err := c.ShouldBind(&userInfo)
 	if err != nil {
 		msg := utils.GetValidMsg(err, &userInfo)
-		fmt.Println(msg)
+		fmt.Println(err)
 		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{msg}}})
 		return
 	}
@@ -37,16 +35,16 @@ func (PublicApi) Login(c *gin.Context) {
 		return
 	}
 	//根据用户名密码查询数据库
-	//验证用户名
+	//验证用户名是否存在
 	var u = models.User{}
-	mdb.Where("email = ?", userInfo.User.Email).First(&u)
-	if u.Email != userInfo.User.Email {
-		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{"用户名或密码错误"}}})
+	mdb.Where("username = ?", userInfo.Username).First(&u)
+	if u.Username != userInfo.Username {
+		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{"用户名不存在"}}})
 		return
 	}
 	//验证密码
-	if u.Password != utils.Md5Str(userInfo.User.Password) {
-		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{"用户名或密码错误"}}})
+	if u.Password != utils.Md5Str(userInfo.Password) {
+		c.JSON(400, gin.H{"code": 400, "errors": map[string]any{"body": []string{"密码错误"}}})
 		return
 	}
 	//生成token
