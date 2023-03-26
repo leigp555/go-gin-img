@@ -70,7 +70,7 @@ Meta:
 	}
 
 	//生成token
-	token, err := utils.Token.Generate(strconv.Itoa(int(u.ID)))
+	token, err := utils.Token.Generate(strconv.Itoa(int(user.ID)))
 	if err != nil {
 		res.Fail.Error(c, err, "/public_api/login 生成token失败")
 		return
