@@ -36,3 +36,8 @@ gin:
     compress: false
     showLine: true
     level: "debug"
+
+login:
+  github:
+    clientId: "97bc323362f96abbc3d3"
+    clientSecret: "f4c82475993cebf0a259750f537aec3d17004dcc"

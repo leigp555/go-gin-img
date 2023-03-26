@@ -15,8 +15,8 @@ var GithubFetch = Fetch{}
 func (Fetch) Token(code string) (token string, errMsg string, error error) {
 	//根据前端code 获取access_token
 	data := url.Values{}
-	data.Set("client_id", "97bc323362f96abbc3d3")
-	data.Set("client_secret", "f4c82475993cebf0a259750f537aec3d17004dcc")
+	data.Set("client_id", global.Config.Login.Github.ClientId)
+	data.Set("client_secret", global.Config.Login.Github.ClientSecret)
 	data.Set("code", code)
 
 	req, err := http.NewRequest("POST", "https://github.com/login/oauth/access_token", strings.NewReader(data.Encode()))

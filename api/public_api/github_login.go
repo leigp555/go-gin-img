@@ -29,6 +29,7 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 		Res.Fail.ErrorWithMsg(c, err, errMsg, errMsg)
 		return
 	}
+	//数据库查询用户是否存在
 
 	Res.Success.WidthData(c, u)
 }

@@ -7,4 +7,5 @@ type Config struct {
 	Logger Logger `yaml:"logger"`
 	System System `yaml:"system"`
 	Gin    Gin    `yaml:"gin"`
+	Login  Login  `yaml:"login"`
 }
