@@ -54,19 +54,14 @@ func (PublicApi) Login(c *gin.Context) {
 		Username  string    `json:"username"`
 		Email     string    `json:"email"`
 		Token     string    `json:"token"`
-		RequestId string    `json:"requestId"`
+		CreatedAt time.Time `json:"createdAt"`
 		UpdateAt  time.Time `json:"updateAt"`
-	}
-	requestId, exist := c.Get("requestId")
-	if !exist {
-		requestId = "0"
-		global.SugarLog.Warn("上下文获取requestId失败")
 	}
 	responseContent := ResponseContent{
 		Username:  u.Username,
 		Email:     u.Email,
 		Token:     token,
-		RequestId: requestId.(string),
+		CreatedAt: u.CreatedAt,
 		UpdateAt:  u.UpdatedAt,
 	}
 	res.Success.Normal(c, "登录成功", responseContent)

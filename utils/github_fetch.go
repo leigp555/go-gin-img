@@ -5,6 +5,7 @@ import (
 	"img/server/global"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -77,4 +78,16 @@ func (Fetch) Uer(token string) (u User, errMsg string, error error) {
 		return User{}, "github user响应体解析失败", err
 	}
 	return user, "", nil
+}
+
+// Email 根据github返回的用户信息生成一个全新的邮箱
+func (Fetch) Email(u User) string {
+	return strconv.Itoa(u.ID) + "@github.com"
+}
+
+func (Fetch) UserName(u User) string {
+	return u.Login + "@github"
+}
+func (Fetch) Password(u User) string {
+	return Md5Str(strconv.Itoa(u.ID))
 }
