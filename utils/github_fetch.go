@@ -28,7 +28,7 @@ func (Fetch) Token(code string) (token string, errMsg string, error error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 	client := &http.Client{
-		Timeout: time.Second * 5,
+		Timeout: time.Second * 12,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -66,7 +66,7 @@ func (Fetch) Uer(token string) (u User, errMsg string, error error) {
 	}
 	req.Header.Set("Authorization", "token "+token)
 	client := &http.Client{
-		Timeout: time.Second * 5,
+		Timeout: time.Second * 12,
 	}
 	resp, err := client.Do(req)
 	if err != nil {

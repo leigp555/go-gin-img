@@ -6,6 +6,7 @@ import (
 	"img/server/global"
 	"img/server/models"
 	"img/server/utils"
+	"strconv"
 	"time"
 )
 
@@ -14,24 +15,24 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 		Code string `form:"code" binding:"required" msg:"code不能为空"`
 	}
 	var callback GithubCallback
-	var Res = utils.Res
+	var res = utils.Res
 	var mdb = global.Mydb
 	//绑定参数
 	if err := c.ShouldBind(&callback); err != nil {
 		msg := utils.GetValidMsg(err, &callback)
-		Res.Fail.Normal(c, 400, msg)
+		res.Fail.Normal(c, 400, msg)
 		return
 	}
 	//获取GitHub Access Token
-	token, msg, err := utils.GithubFetch.Token(callback.Code)
+	githubTken, msg, err := utils.GithubFetch.Token(callback.Code)
 	if err != nil {
-		Res.Fail.ErrorWithMsg(c, err, msg, msg)
+		res.Fail.ErrorWithMsg(c, err, msg, msg)
 		return
 	}
 	//获取GitHub用户信息
-	u, errMsg, err := utils.GithubFetch.Uer(token)
+	u, errMsg, err := utils.GithubFetch.Uer(githubTken)
 	if err != nil || u.ID == 0 {
-		Res.Fail.ErrorWithMsg(c, err, errMsg, errMsg)
+		res.Fail.ErrorWithMsg(c, err, errMsg, errMsg)
 		return
 	}
 	//数据库查询用户是否存在，没有就注册
@@ -50,12 +51,12 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 			}
 			err = mdb.Create(&user).Error
 			if err != nil {
-				Res.Fail.ErrorWithMsg(c, err, "注册失败", "注册失败")
+				res.Fail.ErrorWithMsg(c, err, "注册失败", "注册失败")
 				return
 			}
 			goto Meta
 		} else {
-			Res.Fail.ErrorWithMsg(c, err, "获取用户信息失败", "获取用户信息失败")
+			res.Fail.ErrorWithMsg(c, err, "获取用户信息失败", "获取用户信息失败")
 		}
 		return
 	}
@@ -67,6 +68,14 @@ Meta:
 		CreatedAt time.Time `json:"createdAt"`
 		UpdateAt  time.Time `json:"updateAt"`
 	}
+
+	//生成token
+	token, err := utils.Token.Generate(strconv.Itoa(int(u.ID)))
+	if err != nil {
+		res.Fail.Error(c, err, "/public_api/login 生成token失败")
+		return
+	}
+
 	responseContent := ResponseContent{
 		Username:  user.Username,
 		Email:     user.Email,
@@ -74,5 +83,5 @@ Meta:
 		CreatedAt: user.CreatedAt,
 		UpdateAt:  user.UpdatedAt,
 	}
-	Res.Success.Normal(c, "登录成功", responseContent)
+	res.Success.Normal(c, "登录成功", responseContent)
 }
