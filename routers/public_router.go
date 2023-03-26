@@ -21,6 +21,8 @@ func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
 	{
 		r.POST("/register", api.GroupApi.PublicApi.Register)
 		r.GET("/login", api.GroupApi.PublicApi.Login)
+		r.GET("/auth/github", api.GroupApi.PublicApi.GithubLogin)
+		r.GET("/auth/google", api.GroupApi.PublicApi.GoogleLogin)
 	}
 
 }
