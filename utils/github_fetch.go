@@ -10,11 +10,11 @@ import (
 	"time"
 )
 
-type Fetch struct{}
+type fetch struct{}
 
-var GithubFetch = Fetch{}
+var GithubFetch = fetch{}
 
-func (Fetch) Token(code string) (token string, errMsg string, error error) {
+func (fetch) Token(code string) (token string, errMsg string, error error) {
 	//根据前端code 获取access_token
 	data := url.Values{}
 	data.Set("client_id", global.Config.Login.Github.ClientId)
@@ -58,7 +58,7 @@ type User struct {
 	Email string `json:"email"`
 }
 
-func (Fetch) Uer(token string) (u User, errMsg string, error error) {
+func (fetch) Uer(token string) (u User, errMsg string, error error) {
 	//使用access_token获取用户信息
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
@@ -86,13 +86,13 @@ func (Fetch) Uer(token string) (u User, errMsg string, error error) {
 }
 
 // Email 根据github返回的用户信息生成一个全新的邮箱
-func (Fetch) Email(u User) string {
+func (fetch) Email(u User) string {
 	return strconv.Itoa(u.ID) + "@github.com"
 }
 
-func (Fetch) UserName(u User) string {
+func (fetch) UserName(u User) string {
 	return u.Login + "@github"
 }
-func (Fetch) Password(u User) string {
+func (fetch) Password(u User) string {
 	return Md5Str(strconv.Itoa(u.ID))
 }
