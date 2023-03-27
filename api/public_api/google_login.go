@@ -68,7 +68,6 @@ Meta:
 		res.Fail.Error(c, err, "/public_api/login 生成token失败")
 		return
 	}
-
 	responseContent := ResponseContent{
 		Username:  user.Username,
 		Email:     user.Email,

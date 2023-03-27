@@ -29,7 +29,7 @@ func (f) GoogleUerFetch(token string) (u GoogleUser, errMsg string, error error)
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return GoogleUser{}, "获取用户信息失败", err
+		return GoogleUser{}, "Google拒绝了请求", err
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
