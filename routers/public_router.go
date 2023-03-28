@@ -24,5 +24,8 @@ func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
 		r.GET("/auth/github", api.GroupApi.PublicApi.GithubLogin)
 		r.GET("/auth/google", api.GroupApi.PublicApi.GoogleLogin)
 	}
-
+	{
+		r.POST("/upload", api.GroupApi.ImgApi.UploadImg)
+		r.GET("/searchImg", api.GroupApi.ImgApi.SearchImg)
+	}
 }

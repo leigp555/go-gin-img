@@ -20,7 +20,7 @@ func StartServer() {
 	//初始化gin
 	//设置开发模式
 	r := gin.New()
-	r.Use(gin.Logger())
+	r.Use(gin.Logger(), gin.Recovery())
 
 	//初始化路由
 	routers.InitRouter(r)
