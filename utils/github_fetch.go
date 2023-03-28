@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type fetch struct{}
@@ -27,9 +26,7 @@ func (fetch) Token(code string) (token string, errMsg string, error error) {
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
-	client := &http.Client{
-		Timeout: time.Second * 12,
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", "获取github access_token失败", err
@@ -65,9 +62,7 @@ func (fetch) Uer(token string) (u User, errMsg string, error error) {
 		return User{}, "构造github user请求失败", err
 	}
 	req.Header.Set("Authorization", "token "+token)
-	client := &http.Client{
-		Timeout: time.Second * 12,
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return User{}, "获取github user失败", err

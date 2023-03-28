@@ -24,13 +24,13 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 		return
 	}
 	//获取GitHub Access Token
-	githubTken, msg, err := utils.GithubFetch.Token(callback.Code)
+	githubToken, msg, err := utils.GithubFetch.Token(callback.Code)
 	if err != nil {
 		res.Fail.ErrorWithMsg(c, err, msg, msg)
 		return
 	}
 	//获取GitHub用户信息
-	u, errMsg, err := utils.GithubFetch.Uer(githubTken)
+	u, errMsg, err := utils.GithubFetch.Uer(githubToken)
 	if err != nil || u.ID == 0 {
 		res.Fail.ErrorWithMsg(c, err, errMsg, errMsg)
 		return

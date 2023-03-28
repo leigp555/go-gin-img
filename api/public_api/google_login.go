@@ -25,8 +25,9 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 	}
 	//获取用户信息
 	u, msg, err := utils.GoogleFetch.GoogleUerFetch(googleLogin.AccessToken)
-	if err != nil {
+	if err != nil || u.Email == "" {
 		res.Fail.ErrorWithMsg(c, err, msg, msg)
+		return
 	}
 	//数据库查询用户是否存在，没有就注册
 	var user models.User
