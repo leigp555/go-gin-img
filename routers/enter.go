@@ -65,7 +65,8 @@ func InitRouter(r *gin.Engine) {
 			c.JSON(200, gin.H{"code": 200, "msg": "token", "username": username})
 		})
 	}
-
+	//静态资源托管
+	r.Static("/static", "./public")
 	//注册公共路由（访问不需要提供token）
 	{
 		apiRouterGroup.PublicRouter(g)
