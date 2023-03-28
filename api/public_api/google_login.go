@@ -1,6 +1,7 @@
 package public_api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"img/server/global"
@@ -25,13 +26,13 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 	}
 	//获取用户信息
 	u, msg, err := utils.GoogleFetch.GoogleUerFetch(googleLogin.AccessToken)
-	if err != nil || u.Email == "" {
+	if err != nil || u.User.PermissionId == "" {
 		res.Fail.ErrorWithMsg(c, err, msg, msg)
 		return
 	}
 	//数据库查询用户是否存在，没有就注册
 	var user models.User
-	var userEmail = u.Email
+	var userEmail = u.User.EmailAddress
 	err = mdb.Where("email = ?", userEmail).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -45,6 +46,8 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 			}
 			err = mdb.Create(&user).Error
 			if err != nil {
+				fmt.Println("===========================")
+				fmt.Println(err)
 				res.Fail.ErrorWithMsg(c, err, "注册失败", "注册失败")
 				return
 			}
