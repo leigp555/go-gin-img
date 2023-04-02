@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
+	"img/server/global"
+	"img/server/models"
 	"img/server/utils"
 	"log"
 	"mime/multipart"
@@ -12,13 +14,14 @@ import (
 )
 
 func (ImgApi) UploadImg(c *gin.Context) {
+	mdb := global.Mydb
 	//获取上传的图片
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(500, gin.H{"msg": "上传失败"})
 		return
 	}
-	//图片分类
+	//检查文件类型
 	nameArr := strings.Split(file.Filename, ".")
 	if len(nameArr) <= 1 || len(nameArr) > 2 {
 		c.JSON(400, gin.H{"msg": "请使用正确的图片扩展名"})
@@ -33,8 +36,31 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	fileId := utils.Md5Str(fmt.Sprintf("%s-%s-%s", time.Now().Format("2006/01/02"), username, file.Filename))
 	fileName := fileId + "." + nameArr[1]
 	dst := "./public/img/" + fileName
-	//将图片路径以及id添加到数据库中
+	//缩略图名字
+	thumbName := fmt.Sprintf("thumb%s", fileName)
+	//生成缩略图存储路径
+	thumbFilePath := fmt.Sprintf("./public/thumb/%s", thumbName)
 
+	//检查数据库中是否已经存在该图片
+	var dbImg = models.Img{}
+	err = mdb.Where("img_owner = ? AND img_id=?", username, fileId).First(&dbImg).Error
+	if err == nil {
+		c.JSON(400, gin.H{"msg": "文件已存在"})
+		return
+	}
+	//将图片路径以及id添加到数据库中
+	newImg := models.Img{
+		ImgId:     fileId,
+		ImgOwner:  username,
+		ImgPath:   dst,
+		ImgName:   fileName,
+		ThumbName: thumbName,
+		ThumbPath: thumbFilePath,
+	}
+	if err = mdb.Create(&newImg).Error; err != nil {
+		c.JSON(500, gin.H{"msg": "mysql存储失败"})
+		return
+	}
 	// 上传文件至指定的完整文件路径
 	err = c.SaveUploadedFile(file, dst)
 	if err != nil {
@@ -67,8 +93,7 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	//调整缩略图参数
 	thumb := imaging.Thumbnail(img, 400, 0, imaging.Lanczos)
 	result := imaging.Blur(thumb, 2)
-	//生成缩略图存储路径
-	thumbFilePath := fmt.Sprintf("./public/thumb/%s%s", "thumb", fileName)
+
 	// 保存缩略图到文件
 	err = imaging.Save(result, thumbFilePath)
 	if err != nil {

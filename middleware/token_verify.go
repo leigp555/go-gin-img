@@ -5,6 +5,7 @@ import (
 	"img/server/global"
 	"img/server/models"
 	"img/server/utils"
+	"strconv"
 	"strings"
 )
 
@@ -33,7 +34,7 @@ func TokenVerify() gin.HandlerFunc {
 		var dbUser = models.User{}
 		mdb.Where("id = ?", userId).First(&dbUser)
 		//将用户的信息传给其余的中间件
-		c.Set("userId", dbUser.ID)
+		c.Set("userId", strconv.Itoa(int(dbUser.ID)))
 		c.Set("userEmail", dbUser.Email)
 	}
 }
