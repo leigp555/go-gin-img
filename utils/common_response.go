@@ -16,6 +16,8 @@ type Fail struct{}
 
 var Res = response{}
 
+//成功相关的响应
+
 func (s Success) Normal(c *gin.Context, msg string, data any) {
 	requestId, exist := c.Get("requestId")
 	if !exist {
@@ -40,6 +42,8 @@ func (s Success) WidthMsg(c *gin.Context, msg string) {
 	}
 	c.JSON(200, gin.H{"code": 200, "msg": msg, "requestId": requestId})
 }
+
+//失败相关的响应
 
 func (s Fail) Normal(c *gin.Context, code int, msg string) {
 	requestId, exist := c.Get("requestId")
