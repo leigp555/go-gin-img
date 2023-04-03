@@ -74,26 +74,26 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	// 打开上传的文件
 	src, err := file.Open()
 	if err != nil {
-		log.Fatalf("failed to open image: %v", err)
+		panic("failed to open image: %v")
 		return
 	}
 	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
-			log.Fatalf("failed to close image: %v", err)
+			panic("failed to close image: %v")
 		}
 	}(src)
 
 	// 解码上传的图像
 	img, err := imaging.Decode(src)
+
 	if err != nil {
-		log.Fatalf("failed to open image: %v", err)
+		panic("failed to open image: %v")
 		return
 	}
 	//调整缩略图参数
-	thumb := imaging.Thumbnail(img, 400, 0, imaging.Lanczos)
+	thumb := imaging.Resize(img, 400, 0, imaging.Lanczos)
 	result := imaging.Blur(thumb, 2)
-
 	// 保存缩略图到文件
 	err = imaging.Save(result, thumbFilePath)
 	if err != nil {
