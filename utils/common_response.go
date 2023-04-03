@@ -24,7 +24,7 @@ func (s Success) Normal(c *gin.Context, msg string, data any) {
 		requestId = "0-0-0-0"
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": msg, "requestId": requestId, "data": data})
+	c.JSON(200, gin.H{"success": true, "code": 200, "msg": msg, "requestId": requestId, "data": data})
 }
 func (s Success) WidthData(c *gin.Context, data any) {
 	requestId, exist := c.Get("requestId")
@@ -32,7 +32,7 @@ func (s Success) WidthData(c *gin.Context, data any) {
 		requestId = "0-0-0-0"
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": "success", "requestId": requestId, "data": data})
+	c.JSON(200, gin.H{"success": true, "code": 200, "msg": "success", "requestId": requestId, "data": data})
 }
 func (s Success) WidthMsg(c *gin.Context, msg string) {
 	requestId, exist := c.Get("requestId")
@@ -40,7 +40,7 @@ func (s Success) WidthMsg(c *gin.Context, msg string) {
 		requestId = "0-0-0-0"
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": msg, "requestId": requestId})
+	c.JSON(200, gin.H{"success": true, "code": 200, "msg": msg, "requestId": requestId})
 }
 
 //失败相关的响应
@@ -51,7 +51,7 @@ func (s Fail) Normal(c *gin.Context, code int, msg string) {
 		requestId = "0-0-0-0"
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
-	c.JSON(code, gin.H{"code": code, "msg": msg, "requestId": requestId})
+	c.JSON(code, gin.H{"success": false, "code": code, "msg": msg, "requestId": requestId})
 }
 func (s Fail) WidthData(c *gin.Context, code int, msg string, data any) {
 	requestId, exist := c.Get("requestId")
@@ -59,7 +59,7 @@ func (s Fail) WidthData(c *gin.Context, code int, msg string, data any) {
 		requestId = "0-0-0-0"
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
-	c.JSON(code, gin.H{"code": code, "msg": msg, "requestId": requestId, "data": data})
+	c.JSON(code, gin.H{"success": false, "code": code, "msg": msg, "requestId": requestId, "data": data})
 }
 func (s Fail) Error(c *gin.Context, err error, log string) {
 	requestId, exist := c.Get("requestId")
@@ -68,7 +68,7 @@ func (s Fail) Error(c *gin.Context, err error, log string) {
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
 	global.SugarLog.Error(log, err)
-	c.JSON(500, gin.H{"code": 500, "msg": "服务繁忙,请重试", "requestId": requestId})
+	c.JSON(500, gin.H{"success": false, "code": 500, "msg": "服务繁忙,请重试", "requestId": requestId})
 }
 
 func (s Fail) ErrorWithMsg(c *gin.Context, err error, log string, msg string) {
@@ -78,5 +78,5 @@ func (s Fail) ErrorWithMsg(c *gin.Context, err error, log string, msg string) {
 		global.SugarLog.Warn("上下文获取requestId失败")
 	}
 	global.SugarLog.Error(log, err)
-	c.JSON(500, gin.H{"code": 500, "msg": msg, "requestId": requestId})
+	c.JSON(500, gin.H{"success": false, "code": 500, "msg": msg, "requestId": requestId})
 }
