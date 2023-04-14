@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (ImgApi) SearchImg(c *gin.Context) {
-	file := c.Query("fileName")
-	imgUrl := fmt.Sprintf("http://localhost:8080/static/%s", file)
+func (ImgApi) Search(c *gin.Context) {
+	imgId := c.Query("imgId")
+	imgUrl := fmt.Sprintf("http://localhost:8080/static/%s", imgId)
 	c.JSON(200, gin.H{"msg": "success", "data": imgUrl})
 }

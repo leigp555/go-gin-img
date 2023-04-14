@@ -8,7 +8,7 @@ import (
 func (ApiRouterGroup) ImgRouter(r *gin.RouterGroup) {
 
 	{
-		r.POST("/upload", api.GroupApi.ImgApi.UploadImg)   //上传图片
-		r.GET("/searchImg", api.GroupApi.ImgApi.SearchImg) //获取图片
+		r.POST("/upload", api.GroupApi.ImgApi.UploadImg) //上传图片
+		r.GET("/search", api.GroupApi.ImgApi.Search)     //获取图片
 	}
 }
