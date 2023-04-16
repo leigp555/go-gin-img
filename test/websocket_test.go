@@ -1,11 +1,13 @@
 package test
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func cors() gin.HandlerFunc {
@@ -14,7 +16,7 @@ func cors() gin.HandlerFunc {
 	}
 }
 
-func TestWebSocket(t *testing.T) {
+func TestSocket(t *testing.T) {
 	r := gin.Default()
 	r.Use(cors())
 	r.GET("/chat", ws)
@@ -25,8 +27,16 @@ func TestWebSocket(t *testing.T) {
 }
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:    1024,
+	WriteBufferSize:   1024,
+	HandshakeTimeout:  10 * time.Second,
+	EnableCompression: true,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+	Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
+		fmt.Println(reason)
+	},
 }
 
 var coons []*websocket.Conn
@@ -35,9 +45,7 @@ func ws(c *gin.Context) {
 	// upgrade to websocket
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "error",
-		})
+		fmt.Println(err)
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
