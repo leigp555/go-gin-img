@@ -1,7 +1,7 @@
 mysql:
   addr: "1.117.141.66:3306"
   username: "root"
-  password: "lgp123456"
+  password: "123456abc"
   maxConn: 10
   maxOpen: 100
   db: "img"
@@ -11,24 +11,21 @@ redis:
   db: 0
   poolSize: 50
 system:
-  host: "0.0.0.0"
-  port: "8080"
   env: "dev"
+  logrus:
+    path: "log/system/log"
+    maxSize: 1
+    maxBackups: 5
+    maxAge: 30
+    compress: false
+    showLine: true
+    level: "debug"
 token:
   signingKey: "e199ad17-c090-43cb-b095-1dc55c209a77"
   expiresTime: 604800
-logger:
-  filename: "log/system/log"
-  maxSize: 1
-  maxBackups: 5
-  maxAge: 30
-  compress: false
-  showLine: true
-  level: "debug"
-
 gin:
   mode: release
-  logger:
+  logrus:
     filename: "log/gin/log"
     maxSize: 1
     maxBackups: 5
@@ -36,8 +33,32 @@ gin:
     compress: false
     showLine: true
     level: "debug"
-
 login:
   github:
     clientId: "97bc323362f96abbc3d3"
     clientSecret: "f4c82475993cebf0a259750f537aec3d17004dcc"
+    redirectUri: "http://localhost:8080/callback"
+    scope: "user:email"
+  google:
+    redirectUri: "http://localhost:8080/callback"
+    scope: "user:email"
+email:
+  from: "907090585@qq.com"
+  password: "cvxjaeubymkxbbic"
+  host: "smtp.qq.com"
+imaging:
+  width: 400
+  height: 0
+  blur: 2
+nsq:
+  nsqdAddr: "1.117.141.66:4150"
+  nsqlookupdAddr: "1.117.141.66:4161"
+routinePool:
+  poolSize: 50
+  expiryDuration: 10 * time.Second
+websocket:
+  addr: ":8080"
+  readBufferSize: 1024
+  writeBufferSize: 1024
+  handshakeTimeout: 10 * time.Second
+  enableCompression: true
