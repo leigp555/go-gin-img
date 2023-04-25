@@ -62,3 +62,5 @@ websocket:
   writeBufferSize: 1024
   handshakeTimeout: 10 * time.Second
   enableCompression: true
+elasticsearch:
+  addr: "1.117.141.66:9200"
