@@ -1,16 +1,6 @@
 package config
 
-type GinLogger struct {
-	Filename   string `yaml:"filename"`
-	MaxSize    int    `yaml:"maxSize"`
-	MaxBackups int    `yaml:"maxBackups"`
-	MaxAge     int    `yaml:"maxAge"`
-	Compress   bool   `yaml:"compress"`
-	ShowLine   bool   `yaml:"showLine"`
-	Level      string `yaml:"level"`
-}
-
-type Gin struct {
-	Mode   string `yaml:"mode"`
-	Logger GinLogger
+type GinConfig struct {
+	Mode      string    `yaml:"mode"`
+	LogConfig LogConfig `yaml:"logConfig"`
 }

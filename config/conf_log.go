@@ -1,6 +1,6 @@
 package config
 
-type Logger struct {
+type LogConfig struct {
 	Filename   string `yaml:"filename"`
 	MaxSize    int    `yaml:"maxSize"`
 	MaxBackups int    `yaml:"maxBackups"`

@@ -1,6 +1,6 @@
 package config
 
-type Mysql struct {
+type MysqlConfig struct {
 	Addr     string `yaml:"addr"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`

@@ -1,8 +1,17 @@
 package config
 
-type Login struct {
-	Github struct {
-		ClientId     string `yaml:"clientId"`
-		ClientSecret string `yaml:"clientSecret"`
-	} `yaml:"github"`
+type github struct {
+	ClientId     string `yaml:"clientId"`
+	ClientSecret string `yaml:"clientSecret"`
+	RedirectUri  string `yaml:"redirectUri"`
+	Scope        string `yaml:"scope"`
+}
+type google struct {
+	RedirectUri string `yaml:"redirectUri"`
+	Scope       string `yaml:"scope"`
+}
+
+type LoginConfig struct {
+	Github github `yaml:"github"`
+	Google google `yaml:"google"`
 }

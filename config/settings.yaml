@@ -11,8 +11,10 @@ redis:
   db: 0
   poolSize: 50
 system:
+  host: "0.0.0.0"
+  port: "8000"
   env: "dev"
-  logrus:
+  logConfig:
     path: "log/system/log"
     maxSize: 1
     maxBackups: 5
@@ -25,7 +27,7 @@ token:
   expiresTime: 604800
 gin:
   mode: release
-  logrus:
+  logConfig:
     filename: "log/gin/log"
     maxSize: 1
     maxBackups: 5
@@ -55,12 +57,12 @@ nsq:
   nsqlookupdAddr: "1.117.141.66:4161"
 routinePool:
   poolSize: 50
-  expiryDuration: 10 * time.Second
-websocket:
+  expiryDuration: 10s
+socket:
   addr: ":8080"
   readBufferSize: 1024
   writeBufferSize: 1024
-  handshakeTimeout: 10 * time.Second
+  handshakeTimeout: 10s
   enableCompression: true
 elasticsearch:
   addr: "1.117.141.66:9200"

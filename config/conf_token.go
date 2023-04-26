@@ -1,6 +1,6 @@
 package config
 
-type Token struct {
+type TokenConfig struct {
 	SigningKey  string `yaml:"signingKey"`
 	ExpiresTime int    `yaml:"expiresTime"`
 }

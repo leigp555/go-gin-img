@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Config      config.Config
+	Config      *config.Config
 	Mydb        *gorm.DB
 	Redb        *redis.Client
 	SugarLog    *zap.SugaredLogger
