@@ -3,6 +3,7 @@ package main
 import (
 	"img/server/core"
 	_ "img/server/docs"
+	"img/server/models"
 )
 
 func init() {
@@ -42,4 +43,8 @@ func main() {
 	//启动web服务
 	//service.StartServer()
 	core.InitConf()
+	core.InitLogger()
+	core.LinkMysqlDB()
+	core.LinkRedisDB()
+	models.CreateTables()
 }

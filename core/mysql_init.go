@@ -13,7 +13,6 @@ type Writer struct {
 }
 
 func (w Writer) Printf(format string, args ...interface{}) {
-	fmt.Println(len(args))
 	if len(args) == 4 {
 		global.Mlog.Info(args[3])
 	} else {
