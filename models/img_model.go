@@ -17,10 +17,10 @@ type Img struct {
 
 // Generate 创建文章表
 func (Img) Generate() {
-	var db = global.Mydb
+	var db = global.Mdb
 	err := db.AutoMigrate(&Img{})
 	if err != nil {
-		global.SugarLog.Panicln("Img表创建失败")
+		global.Slog.Panicln("Img表创建失败")
 	}
 }
 

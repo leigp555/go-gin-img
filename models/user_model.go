@@ -13,10 +13,10 @@ type User struct {
 }
 
 func (User) Generate() {
-	var db = global.Mydb
+	var db = global.Mdb
 	err := db.AutoMigrate(&User{})
 	if err != nil {
-		global.SugarLog.Panicln("User表创建失败")
+		global.Slog.Panicln("User表创建失败")
 	}
 }
 

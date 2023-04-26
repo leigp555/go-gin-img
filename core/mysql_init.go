@@ -6,15 +6,27 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"img/server/global"
-	"log"
-	"os"
 	"time"
 )
+
+type Writer struct {
+}
+
+func (w Writer) Printf(format string, args ...interface{}) {
+	fmt.Println(len(args))
+	if len(args) == 4 {
+		global.Mlog.Info(args[3])
+	} else {
+		global.Mlog.Info(args)
+	}
+
+}
 
 // LinkMysqlDB LinkDB 连接mysql数据库
 func LinkMysqlDB() {
 	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		//log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		Writer{},
 		logger.Config{
 			SlowThreshold:             time.Second, // 慢 SQL 阈值
 			LogLevel:                  logger.Info, // 日志级别
@@ -29,7 +41,7 @@ func LinkMysqlDB() {
 		Logger: newLogger, //配置一个日志
 	})
 	if err != nil {
-		global.SugarLog.Fatalf("mysql数据库连接失败%v\n", err)
+		global.Slog.Fatalf("mysql数据库连接失败%v\n", err)
 	}
 	sqlDb, _ := d.DB()
 	//设置连接池
@@ -37,6 +49,6 @@ func LinkMysqlDB() {
 	sqlDb.SetMaxOpenConns(global.Config.Mysql.MaxOpen) //设置最大的空闲连接数
 	sqlDb.SetConnMaxLifetime(time.Hour * 4)            //连接最大复用时间，不能超过wait_timeout
 
-	global.Mydb = d
-	global.SugarLog.Info("成功连接mysql数据库")
+	global.Mdb = d
+	global.Slog.Info("成功连接mysql数据库")
 }

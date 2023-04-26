@@ -3,7 +3,7 @@ package config
 type Config struct {
 	Mysql         MysqlConfig         `yaml:"mysql"`
 	Redis         RedisConfig         `yaml:"redis"`
-	System        SocketConfig        `yaml:"system"`
+	System        SystemConfig        `yaml:"system"`
 	Token         TokenConfig         `yaml:"token"`
 	Gin           GinConfig           `yaml:"gin"`
 	Login         LoginConfig         `yaml:"login"`

@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	Config      *config.Config
-	Mydb        *gorm.DB
-	Redb        *redis.Client
-	SugarLog    *zap.SugaredLogger
-	GinSugarLog *zap.SugaredLogger
-	Logger      *zap.Logger
+	Config *config.Config
+	Mdb    *gorm.DB
+	Rdb    *redis.Client
+	Slog   *zap.SugaredLogger
+	Glog   *zap.SugaredLogger
+	Mlog   *zap.SugaredLogger
 )

@@ -20,8 +20,8 @@ func LinkRedisDB() {
 	defer cancel()
 	_, err := rdb.Ping(ctx).Result()
 	if err != nil {
-		global.SugarLog.Fatalf("redis数据库连接失败%v\n", err)
+		global.Slog.Fatalf("redis数据库连接失败%v\n", err)
 	}
-	global.Redb = rdb
-	global.SugarLog.Info("成功连接redis数据库")
+	global.Rdb = rdb
+	global.Slog.Info("成功连接redis数据库")
 }

@@ -1,3 +1,15 @@
+system:
+  host: "0.0.0.0"
+  port: "8000"
+  env: "dev"
+  logConfig:
+    filename: "log/system/log"
+    maxSize: 1
+    maxBackups: 5
+    maxAge: 30
+    compress: false
+    showLine: true
+    level: "debug"
 mysql:
   addr: "1.117.141.66:3306"
   username: "root"
@@ -5,23 +17,19 @@ mysql:
   maxConn: 10
   maxOpen: 100
   db: "img"
-redis:
-  addr: "1.117.141.66:6379"
-  password: "123456abc"
-  db: 0
-  poolSize: 50
-system:
-  host: "0.0.0.0"
-  port: "8000"
-  env: "dev"
   logConfig:
-    path: "log/system/log"
+    filename: "log/mysql/log"
     maxSize: 1
     maxBackups: 5
     maxAge: 30
     compress: false
     showLine: true
     level: "debug"
+redis:
+  addr: "1.117.141.66:6379"
+  password: "123456abc"
+  db: 0
+  poolSize: 50
 token:
   signingKey: "e199ad17-c090-43cb-b095-1dc55c209a77"
   expiresTime: 604800

@@ -1,6 +1,6 @@
 package config
 
-type System struct {
+type SystemConfig struct {
 	Host      string    `yaml:"host"`
 	Port      string    `yaml:"port"`
 	Env       string    `yaml:"env"`
