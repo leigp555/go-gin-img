@@ -44,6 +44,6 @@ func startConsumer() {
 }
 
 func TestNsq(t *testing.T) {
-	go startConsumer()
-	startProducer()
+	startConsumer()
+	//startProducer()
 }

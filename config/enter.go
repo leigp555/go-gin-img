@@ -10,7 +10,6 @@ type Config struct {
 	Email         EmailConfig         `yaml:"email"`
 	Imaging       ImagingConfig       `yaml:"imaging"`
 	Nsq           NsqConfig           `yaml:"nsq"`
-	RoutinePool   RoutinePoolConfig   `yaml:"routinePool"`
 	Socket        SocketConfig        `yaml:"socket"`
 	Elasticsearch ElasticsearchConfig `yaml:"elasticsearch"`
 }

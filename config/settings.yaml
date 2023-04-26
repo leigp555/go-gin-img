@@ -63,9 +63,6 @@ imaging:
 nsq:
   nsqdAddr: "1.117.141.66:4150"
   nsqlookupdAddr: "1.117.141.66:4161"
-routinePool:
-  poolSize: 50
-  expiryDuration: 10s
 socket:
   addr: ":8080"
   readBufferSize: 1024
@@ -73,4 +70,6 @@ socket:
   handshakeTimeout: 10s
   enableCompression: true
 elasticsearch:
-  addr: "1.117.141.66:9200"
+  addr: "http://1.117.141.66:9200"
+  username: "elastic"
+  password: "123456abc"
