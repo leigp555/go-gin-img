@@ -19,7 +19,7 @@ func (PublicApi) Login(c *gin.Context) {
 		CaptchaCode string `form:"imgCaptcha" binding:"required,numeric,len=4" msg:"验证码不正确"`
 	}
 	var userInfo user
-	mdb := global.Mydb
+	mdb := global.Mdb
 	res := utils.Res
 	//验证json数据绑定
 	if err := c.ShouldBind(&userInfo); err != nil {

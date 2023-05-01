@@ -22,8 +22,8 @@ func (PublicApi) Register(c *gin.Context) {
 	}
 
 	var newUserInfo NewUserInfo
-	rdb := global.Redb
-	mdb := global.Mydb
+	rdb := global.Rdb
+	mdb := global.Mdb
 	res := utils.Res
 	//验证数据绑定
 	if err := c.ShouldBind(&newUserInfo); err != nil {

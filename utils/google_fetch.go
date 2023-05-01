@@ -38,7 +38,7 @@ func (f) GoogleUerFetch(token string) (u GoogleUser, errMsg string, error error)
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			global.SugarLog.Error("google user 响应体关闭失败", err)
+			global.Slog.Error("google user 响应体关闭失败", err)
 		}
 	}()
 	jsonBytes, err := ioutil.ReadAll(resp.Body)

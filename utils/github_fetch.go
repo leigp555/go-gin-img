@@ -33,7 +33,7 @@ func (fetch) Token(code string) (token string, errMsg string, error error) {
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			global.SugarLog.Error("github access_token响应体关闭失败")
+			global.Slog.Error("github access_token响应体关闭失败")
 		}
 	}()
 	var result struct {
@@ -69,7 +69,7 @@ func (fetch) Uer(token string) (u User, errMsg string, error error) {
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
-			global.SugarLog.Error("github user 响应体关闭失败", err)
+			global.Slog.Error("github user 响应体关闭失败", err)
 		}
 	}()
 	var user = User{}

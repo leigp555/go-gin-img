@@ -11,7 +11,7 @@ import (
 
 func TokenVerify() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var mdb = global.Mydb
+		var mdb = global.Mdb
 		var res = utils.Res
 		//从请求头获取token
 		tokenHeader := c.GetHeader("Authorization")

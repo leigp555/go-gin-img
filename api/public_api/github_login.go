@@ -16,7 +16,7 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 	}
 	var callback GithubCallback
 	var res = utils.Res
-	var mdb = global.Mydb
+	var mdb = global.Mdb
 	//绑定参数
 	if err := c.ShouldBind(&callback); err != nil {
 		msg := utils.GetValidMsg(err, &callback)

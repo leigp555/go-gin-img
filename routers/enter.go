@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"img/server/api"
 	"img/server/middleware"
 )
 
@@ -10,8 +11,8 @@ type ApiRouterGroup struct{}
 var apiRouterGroup = new(ApiRouterGroup)
 
 func InitRouter(r *gin.Engine) {
-	//添加全局跨域中间件
-	r.Use(middleware.Cors(), middleware.Log())
+	//添加全局日志中间件
+	r.Use(middleware.Log())
 	//配置路由路口
 	g := r.Group("v1/api")
 
@@ -35,4 +36,8 @@ func InitRouter(r *gin.Engine) {
 	{
 		apiRouterGroup.ImgRouter(imageGroup)
 	}
+}
+
+func InitSocketRouter(r *gin.Engine) {
+	r.GET("/chat", api.GroupApi.SocketApi.Chat)
 }

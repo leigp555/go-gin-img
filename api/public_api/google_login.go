@@ -17,7 +17,7 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 	}
 	var googleLogin GoogleLogin
 	var res = utils.Res
-	var mdb = global.Mydb
+	var mdb = global.Mdb
 	//绑定参数
 	if err := c.ShouldBind(&googleLogin); err != nil {
 		msg := utils.GetValidMsg(err, &googleLogin)

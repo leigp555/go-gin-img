@@ -17,7 +17,7 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 		Email string `form:"email" binding:"required,email" msg:"邮箱格式不正确"`
 	}
 	var userEmail Email
-	rdb := global.Redb
+	rdb := global.Rdb
 	res := utils.Res
 	//json验证
 	if err := c.ShouldBind(&userEmail); err != nil {

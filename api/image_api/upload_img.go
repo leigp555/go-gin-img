@@ -13,7 +13,7 @@ import (
 )
 
 func (ImgApi) UploadImg(c *gin.Context) {
-	mdb := global.Mydb
+	mdb := global.Mdb
 	res := utils.Res
 	//获取上传的图片
 	file, err := c.FormFile("file")
@@ -77,20 +77,20 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	// 打开上传的文件
 	src, err := file.Open()
 	if err != nil {
-		global.SugarLog.Error("failed to open image: %v", err)
+		global.Slog.Error("failed to open image: %v", err)
 		return
 	}
 	defer func(src multipart.File) {
 		err := src.Close()
 		if err != nil {
-			global.SugarLog.Error("failed to close image: %v", err)
+			global.Slog.Error("failed to close image: %v", err)
 		}
 	}(src)
 
 	// 解码上传的图像
 	img, err := imaging.Decode(src)
 	if err != nil {
-		global.SugarLog.Error("failed to decode image: %v", err)
+		global.Slog.Error("failed to decode image: %v", err)
 		return
 	}
 	//调整缩略图参数
@@ -99,6 +99,6 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	// 保存缩略图到文件
 	err = imaging.Save(result, thumbFilePath)
 	if err != nil {
-		global.SugarLog.Error("failed to save image: %v", err)
+		global.Slog.Error("failed to save image: %v", err)
 	}
 }
