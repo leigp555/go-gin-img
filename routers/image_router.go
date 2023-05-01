@@ -5,7 +5,7 @@ import (
 	"img/server/api"
 )
 
-func (ApiRouterGroup) ImgRouter(r *gin.RouterGroup) {
+func (routerGroup) ImgRouter(r *gin.RouterGroup) {
 
 	{
 		r.POST("/upload", api.GroupApi.ImgApi.UploadImg) //上传图片

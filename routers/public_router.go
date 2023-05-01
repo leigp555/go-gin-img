@@ -7,7 +7,7 @@ import (
 	"img/server/api"
 )
 
-func (ApiRouterGroup) PublicRouter(r *gin.RouterGroup) {
+func (routerGroup) PublicRouter(r *gin.RouterGroup) {
 	//swagger文档路由
 	{
 		r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) //swagger处理函数
