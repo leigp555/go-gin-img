@@ -5,8 +5,7 @@ import (
 	"img/server/api"
 )
 
-func (routerGroup) UserRouter(r *gin.RouterGroup) {
-	r.GET("/login", api.GroupApi.UserApi.UserLogin)
-	r.GET("/register", api.GroupApi.UserApi.UserRegister)
-
+func (routerGroup) user(r *gin.RouterGroup) {
+	r.GET("/login", api.Group.User.UserLogin)
+	r.GET("/register", api.Group.User.UserRegister)
 }

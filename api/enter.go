@@ -8,10 +8,10 @@ import (
 )
 
 type apiGroup struct {
-	UserApi   user_api.UserApi
-	PublicApi public_api.PublicApi
-	ImgApi    image_api.ImgApi
-	SocketApi socket_api.SocketApi
+	User   user_api.UserApi
+	Public public_api.PublicApi
+	Img    image_api.ImgApi
+	Socket socket_api.SocketApi
 }
 
-var GroupApi = new(apiGroup)
+var Group = new(apiGroup)
