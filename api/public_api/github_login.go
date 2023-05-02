@@ -36,17 +36,30 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 	}
 	//数据库查询用户是否存在，没有就注册
 	var user models.User
-	var userEmail = utils.GithubFetch.Email(u)
-	err = mdb.Where("email = ?", userEmail).First(&user).Error
+	var username = utils.GithubFetch.UserName(u)
+	err = mdb.Where("username = ?", username).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			//注册用户
-			username := utils.GithubFetch.UserName(u)
 			password := utils.GithubFetch.Password(u)
+			//获取uid
+			uid, err := utils.GetUid()
+			if err != nil {
+				utils.Res.FailWidthRecord(c, 500, "注册失败,请重试", struct{}{}, err, "uid生成失败")
+				return
+			}
 			user = models.User{
-				Email:    userEmail,
-				Username: username,
-				Password: password,
+				Username:       username,
+				Password:       password,
+				NickName:       utils.GenerateNackName(),
+				Uid:            uid,
+				DiskLimit:      5120,
+				DiskUsage:      0,
+				Role:           "normal",
+				LastLogin:      time.Now().Format("2006-01-02 15:04:05"),
+				LastLoginIp:    c.ClientIP(),
+				CurrentLogin:   time.Now().Format("2006-01-02 15:04:05"),
+				CurrentLoginIp: c.ClientIP(),
 			}
 			err = mdb.Create(&user).Error
 			if err != nil {
@@ -59,6 +72,16 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 		}
 		return
 	}
+	//已经注册,直接登录
+	//修改登录时间和IP地址
+	user.LastLogin = user.CurrentLogin
+	user.LastLoginIp = user.CurrentLoginIp
+	user.CurrentLogin = time.Now().Format("2006-01-02 15:04:05")
+	user.CurrentLoginIp = c.ClientIP()
+	if err := mdb.Save(&user).Error; err != nil {
+		utils.Res.FailWidthRecord(c, 500, "登录失败,请重试", struct{}{}, err, "mysql更新失败")
+		return
+	}
 Meta:
 	type ResponseContent struct {
 		Username  string    `json:"username"`
@@ -67,7 +90,6 @@ Meta:
 		CreatedAt time.Time `json:"createdAt"`
 		UpdateAt  time.Time `json:"updateAt"`
 	}
-
 	//生成token
 	token, err := utils.Token.Generate(strconv.Itoa(int(user.ID)))
 	if err != nil {

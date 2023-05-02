@@ -2,7 +2,6 @@ package public_api
 
 import (
 	"context"
-	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"img/server/global"
 	"img/server/models"
@@ -57,27 +56,30 @@ func (PublicApi) Register(c *gin.Context) {
 		utils.Res.Fail(c, 400, "用户名已存在", struct{}{})
 		return
 	}
-	//生成uid
-	node, err := snowflake.NewNode(1)
+	//获取uid
+	uid, err := utils.GetUid()
 	if err != nil {
 		utils.Res.FailWidthRecord(c, 500, "注册失败,请重试", struct{}{}, err, "uid生成失败")
 		return
 	}
-	uid := node.Generate()
 	//将密码md5
 	s := utils.Md5Str(newUserInfo.Password)
 	newUserInfo.Password = s
 	//保存到数据库
 	newUser := models.User{
-		Username:    newUserInfo.Username,
-		Email:       newUserInfo.Email,
-		Password:    newUserInfo.Password,
-		Uid:         uid.String(),
-		DiskLimit:   5120,
-		DiskUsage:   0,
-		Role:        "normal",
-		LastLogin:   time.Now().Format("2006-01-02 15:04:05"),
-		LastLoginIp: c.ClientIP(),
+		Username:       newUserInfo.Username,
+		Email:          newUserInfo.Email,
+		Password:       newUserInfo.Password,
+		NickName:       utils.GenerateNackName(),
+		Uid:            uid,
+		DiskLimit:      5120,
+		DiskUsage:      0,
+		Role:           "normal",
+		EmailVerified:  true,
+		LastLogin:      time.Now().Format("2006-01-02 15:04:05"),
+		LastLoginIp:    c.ClientIP(),
+		CurrentLogin:   time.Now().Format("2006-01-02 15:04:05"),
+		CurrentLoginIp: c.ClientIP(),
 	}
 	if err = mdb.Create(&newUser).Error; err != nil {
 		utils.Res.FailWidthRecord(c, 500, "注册失败,请重试", struct{}{}, err, "用户注册数据存储失败")

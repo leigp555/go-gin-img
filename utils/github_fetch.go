@@ -51,8 +51,6 @@ func (fetch) Token(code string) (token string, errMsg string, error error) {
 type User struct {
 	ID    int    `json:"id"`
 	Login string `json:"login"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
 }
 
 func (fetch) Uer(token string) (u User, errMsg string, error error) {
@@ -78,11 +76,6 @@ func (fetch) Uer(token string) (u User, errMsg string, error error) {
 		return User{}, "github user响应体解析失败", err
 	}
 	return user, "", nil
-}
-
-// Email 根据github返回的用户信息生成一个全新的邮箱
-func (fetch) Email(u User) string {
-	return strconv.Itoa(u.ID) + "@github.com"
 }
 
 func (fetch) UserName(u User) string {

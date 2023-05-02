@@ -43,6 +43,16 @@ func (PublicApi) Login(c *gin.Context) {
 		utils.Res.Fail(c, 400, "密码错误", struct{}{})
 		return
 	}
+	//修改登录时间和IP地址
+	u.LastLogin = u.CurrentLogin
+	u.LastLoginIp = u.CurrentLoginIp
+	u.CurrentLogin = time.Now().Format("2006-01-02 15:04:05")
+	u.CurrentLoginIp = c.ClientIP()
+	if err := mdb.Save(&u).Error; err != nil {
+		utils.Res.FailWidthRecord(c, 500, "登录失败,请重试", struct{}{}, err, "mysql更新失败")
+		return
+	}
+
 	//生成token
 	token, err := utils.Token.Generate(strconv.Itoa(int(u.ID)))
 	if err != nil {
