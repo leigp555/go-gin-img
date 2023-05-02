@@ -14,21 +14,20 @@ import (
 
 func (ImgApi) UploadImg(c *gin.Context) {
 	mdb := global.Mdb
-	res := utils.Res
 	//获取上传的图片
 	file, err := c.FormFile("file")
 	if err != nil {
-		res.Fail.Normal(c, 400, "请上传文件")
+		utils.Res.Fail(c, 400, "请上传文件", struct{}{})
 		return
 	}
 	//检查文件类型
 	nameArr := strings.Split(file.Filename, ".")
 	if len(nameArr) <= 1 || len(nameArr) > 2 {
-		res.Fail.Normal(c, 400, "请使用正确的图片扩展名")
+		utils.Res.Fail(c, 400, "请使用正确的图片扩展名", struct{}{})
 		return
 	}
 	if nameArr[1] != "jpg" && nameArr[1] != "png" && nameArr[1] != "jpeg" && nameArr[1] != "gif" {
-		res.Fail.Normal(c, 400, "只接收扩展名为 image/png, image/jpeg, image/gif, image/jpg的图片")
+		utils.Res.Fail(c, 400, "只接收扩展名为 image/png, image/jpeg, image/gif, image/jpg的图片", struct{}{})
 		return
 	}
 	//生成图片名和图片ID以及存储路径
@@ -45,13 +44,13 @@ func (ImgApi) UploadImg(c *gin.Context) {
 	var dbImg = models.Img{}
 	err = mdb.Where("img_owner = ? AND img_id=?", username, fileId).First(&dbImg).Error
 	if err == nil {
-		res.Fail.Normal(c, 400, "图片已存在")
+		utils.Res.Fail(c, 400, "图片已存在", struct{}{})
 		return
 	}
 	// 上传文件至指定的完整文件路径
 	err = c.SaveUploadedFile(file, dst)
 	if err != nil {
-		res.Fail.Normal(c, 500, "图片存储失败")
+		utils.Res.Fail(c, 500, "图片存储失败", struct{}{})
 		return
 	}
 
@@ -65,12 +64,12 @@ func (ImgApi) UploadImg(c *gin.Context) {
 		ThumbPath: thumbFilePath,
 	}
 	if err = mdb.Create(&newImg).Error; err != nil {
-		res.Fail.Normal(c, 500, "添加图片失败")
+		utils.Res.Fail(c, 500, "添加图片失败", struct{}{})
 		return
 	}
 
 	//存储成功
-	res.Success.Normal(c, "上传成功", map[string]string{"imgId": newImg.ImgId})
+	utils.Res.Success(c, "上传成功", map[string]string{"imgId": newImg.ImgId})
 
 	//响应结束生成图片缩略图
 	c.Next()

@@ -15,24 +15,23 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 		Code string `form:"code" binding:"required" msg:"code不能为空"`
 	}
 	var callback GithubCallback
-	var res = utils.Res
 	var mdb = global.Mdb
 	//绑定参数
 	if err := c.ShouldBind(&callback); err != nil {
 		msg := utils.GetValidMsg(err, &callback)
-		res.Fail.Normal(c, 400, msg)
+		utils.Res.Fail(c, 400, msg, struct{}{})
 		return
 	}
 	//获取GitHub Access Token
 	githubToken, msg, err := utils.GithubFetch.Token(callback.Code)
 	if err != nil {
-		res.Fail.ErrorWithMsg(c, err, msg, msg)
+		utils.Res.FailWidthRecord(c, 500, msg, struct{}{}, err, "获取GitHub Access Token失败")
 		return
 	}
 	//获取GitHub用户信息
 	u, errMsg, err := utils.GithubFetch.Uer(githubToken)
 	if err != nil || u.ID == 0 {
-		res.Fail.ErrorWithMsg(c, err, errMsg, errMsg)
+		utils.Res.FailWidthRecord(c, 500, errMsg, struct{}{}, err, "获取GitHub用户信息失败")
 		return
 	}
 	//数据库查询用户是否存在，没有就注册
@@ -51,12 +50,12 @@ func (PublicApi) GithubLogin(c *gin.Context) {
 			}
 			err = mdb.Create(&user).Error
 			if err != nil {
-				res.Fail.ErrorWithMsg(c, err, "注册失败", "注册失败")
+				utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "用户注册数据写入mysql失败")
 				return
 			}
 			goto Meta
 		} else {
-			res.Fail.ErrorWithMsg(c, err, "获取用户信息失败", "获取用户信息失败")
+			utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "用户注册数据查询mysql失败")
 		}
 		return
 	}
@@ -72,7 +71,7 @@ Meta:
 	//生成token
 	token, err := utils.Token.Generate(strconv.Itoa(int(user.ID)))
 	if err != nil {
-		res.Fail.Error(c, err, "/public_api/login 生成token失败")
+		utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "token生成失败")
 		return
 	}
 
@@ -83,5 +82,5 @@ Meta:
 		CreatedAt: user.CreatedAt,
 		UpdateAt:  user.UpdatedAt,
 	}
-	res.Success.Normal(c, "登录成功", responseContent)
+	utils.Res.Success(c, "登录成功", responseContent)
 }

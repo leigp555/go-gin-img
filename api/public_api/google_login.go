@@ -16,18 +16,17 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 		AccessToken string `form:"access_token" binding:"required" msg:"access_token不能为空"`
 	}
 	var googleLogin GoogleLogin
-	var res = utils.Res
 	var mdb = global.Mdb
 	//绑定参数
 	if err := c.ShouldBind(&googleLogin); err != nil {
 		msg := utils.GetValidMsg(err, &googleLogin)
-		res.Fail.Normal(c, 400, msg)
+		utils.Res.Fail(c, 400, msg, struct{}{})
 		return
 	}
 	//获取用户信息
 	u, msg, err := utils.GoogleFetch.GoogleUerFetch(googleLogin.AccessToken)
 	if err != nil || u.User.PermissionId == "" {
-		res.Fail.ErrorWithMsg(c, err, msg, msg)
+		utils.Res.FailWidthRecord(c, 500, msg, struct{}{}, err, "获取用户信息失败")
 		return
 	}
 	//数据库查询用户是否存在，没有就注册
@@ -48,12 +47,12 @@ func (PublicApi) GoogleLogin(c *gin.Context) {
 			if err != nil {
 				fmt.Println("===========================")
 				fmt.Println(err)
-				res.Fail.ErrorWithMsg(c, err, "注册失败", "注册失败")
+				utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "用户注册数据写入mysql失败")
 				return
 			}
 			goto Meta
 		} else {
-			res.Fail.ErrorWithMsg(c, err, "获取用户信息失败", "获取用户信息失败")
+			utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "用户注册数据查询mysql失败")
 		}
 		return
 	}
@@ -69,7 +68,7 @@ Meta:
 	//生成token
 	token, err := utils.Token.Generate(strconv.Itoa(int(user.ID)))
 	if err != nil {
-		res.Fail.Error(c, err, "/public_api/login 生成token失败")
+		utils.Res.FailWidthRecord(c, 500, "注册失败", struct{}{}, err, "token生成失败")
 		return
 	}
 	responseContent := ResponseContent{
@@ -79,5 +78,5 @@ Meta:
 		CreatedAt: user.CreatedAt,
 		UpdateAt:  user.UpdatedAt,
 	}
-	res.Success.Normal(c, "登录成功", responseContent)
+	utils.Res.Success(c, "登录成功", responseContent)
 }

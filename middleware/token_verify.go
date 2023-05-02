@@ -12,12 +12,11 @@ import (
 func TokenVerify() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var mdb = global.Mdb
-		var res = utils.Res
 		//从请求头获取token
 		tokenHeader := c.GetHeader("Authorization")
 		//从请求头获取token失败
 		if tokenHeader == "" {
-			res.Fail.Normal(c, 401, "请上传身份凭证")
+			utils.Res.Fail(c, 401, "请上传身份凭证", struct{}{})
 			c.Abort()
 			return
 		}
@@ -27,7 +26,7 @@ func TokenVerify() gin.HandlerFunc {
 		//解析token 解析失败阻止后续中间件执行
 		userId, err2 := utils.Token.Parse(tokenStr)
 		if err2 != nil {
-			res.Fail.Normal(c, 403, "用户身份过期,请重新登录")
+			utils.Res.Fail(c, 403, "用户身份过期,请重新登录", struct{}{})
 			c.Abort()
 			return
 		}

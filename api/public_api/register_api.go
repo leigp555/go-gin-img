@@ -2,6 +2,7 @@ package public_api
 
 import (
 	"context"
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"img/server/global"
 	"img/server/models"
@@ -24,50 +25,62 @@ func (PublicApi) Register(c *gin.Context) {
 	var newUserInfo NewUserInfo
 	rdb := global.Rdb
 	mdb := global.Mdb
-	res := utils.Res
 	//验证数据绑定
 	if err := c.ShouldBind(&newUserInfo); err != nil {
 		msg := utils.GetValidMsg(err, &newUserInfo)
-		res.Fail.Normal(c, 400, msg)
+		utils.Res.Fail(c, 400, msg, struct{}{})
 		return
 	}
 
 	//验证图形验证码
 	b := utils.Captcha.Verify(newUserInfo.ImgCaptchaId, newUserInfo.ImgCaptcha)
 	if b == false {
-		res.Fail.Normal(c, 400, "图形验证码错误")
+		utils.Res.Fail(c, 400, "图形验证码错误", struct{}{})
 		return
 	}
 	//验证email验证码
 	var ctx = context.Background()
 	val, err := rdb.Get(ctx, newUserInfo.Email).Result()
 	if err != nil || val != newUserInfo.EmailCaptchaCode {
-		res.Fail.Normal(c, 400, "邮箱验证码错误")
+		utils.Res.Fail(c, 400, "邮箱验证码错误", struct{}{})
 		return
 	}
 	//查询邮箱或者用户名是否已经被使用
 	var u = models.User{}
 	mdb.Where("email = ?", newUserInfo.Email).Or("username=?", newUserInfo.Username).Find(&u)
 	if u.Email == newUserInfo.Email {
-		res.Fail.Normal(c, 400, "邮箱已绑定")
+		utils.Res.Fail(c, 400, "邮箱已绑定", struct{}{})
 		return
 	}
 	//查询用户名是否已存在
 	if u.Username == newUserInfo.Username {
-		res.Fail.Normal(c, 400, "用户名已存在")
+		utils.Res.Fail(c, 400, "用户名已存在", struct{}{})
 		return
 	}
+	//生成uid
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		utils.Res.FailWidthRecord(c, 500, "注册失败,请重试", struct{}{}, err, "uid生成失败")
+		return
+	}
+	uid := node.Generate()
 	//将密码md5
 	s := utils.Md5Str(newUserInfo.Password)
 	newUserInfo.Password = s
 	//保存到数据库
 	newUser := models.User{
-		Username: newUserInfo.Username,
-		Email:    newUserInfo.Email,
-		Password: newUserInfo.Password,
+		Username:    newUserInfo.Username,
+		Email:       newUserInfo.Email,
+		Password:    newUserInfo.Password,
+		Uid:         uid.String(),
+		DiskLimit:   5120,
+		DiskUsage:   0,
+		Role:        "normal",
+		LastLogin:   time.Now().Format("2006-01-02 15:04:05"),
+		LastLoginIp: c.ClientIP(),
 	}
 	if err = mdb.Create(&newUser).Error; err != nil {
-		res.Fail.Error(c, err, "写入数据库失败，用户注册不成功")
+		utils.Res.FailWidthRecord(c, 500, "注册失败,请重试", struct{}{}, err, "用户注册数据存储失败")
 		return
 	}
 	//注册成功，返回客户端
@@ -83,5 +96,5 @@ func (PublicApi) Register(c *gin.Context) {
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 	}
-	res.Success.Normal(c, "注册成功", responseContent)
+	utils.Res.Success(c, "注册成功", responseContent)
 }
