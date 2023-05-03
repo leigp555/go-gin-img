@@ -20,6 +20,8 @@ type User struct {
 	LastLoginIp    string `gorm:"type:varchar(50);comment:最后登录ip"`
 	CurrentLogin   string `gorm:"type:varchar(50);comment:当前登录时间"`
 	CurrentLoginIp string `gorm:"type:varchar(50);comment:当前登录ip"`
+	Bio            string `gorm:"type:varchar(100);comment:个人简介"`
+	Avatar         string `gorm:"type:varchar(100);comment:用户头像"`
 }
 
 func (User) Generate() {

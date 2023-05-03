@@ -37,7 +37,7 @@ func (PublicApi) SendEmailCaptcha(c *gin.Context) {
 		return
 	}
 	//发送验证码
-	if err := utils.Email.Send([]string{userEmail.Email}, randStr); err != nil {
+	if err := utils.QEmail.Send(userEmail.Email, randStr); err != nil {
 		utils.Res.FailWidthRecord(c, 500, "验证码发送失败,请重试", struct{}{}, err, "邮箱验证码发送失败:%s")
 		return
 	}

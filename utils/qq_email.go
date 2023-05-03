@@ -5,16 +5,16 @@ import (
 	"net/smtp"
 )
 
-type gmail struct{}
+type qemail struct{}
 
-var GEmail = new(gmail)
+var QEmail = new(qemail)
 
-func (gmail) Send(emailNumber string, randStr string) (err error) {
+func (qemail) Send(emailNumber string, randStr string) (err error) {
 	// 设置邮件服务器信息
-	smtpServer := "smtp.gmail.com"
+	smtpServer := "smtp.qq.com"
 	smtpPort := "587"
-	auth := smtp.PlainAuth("", "xyleigp@gmail.com", "dyshkcrrlsdwyhhh", smtpServer)
-	from := "IMG 图床"
+	auth := smtp.PlainAuth("", "2026499232@qq.com", "ndzqxcvuekkkdjhd", smtpServer)
+	from := "2026499232@qq.com"
 	to := []string{emailNumber}
 	subject := "IMG图床验证码"
 	body := fmt.Sprintf(`
@@ -27,5 +27,6 @@ func (gmail) Send(emailNumber string, randStr string) (err error) {
 		body
 	// 发送邮件
 	err = smtp.SendMail(smtpServer+":"+smtpPort, auth, from, []string{emailNumber}, []byte(msg))
+	fmt.Println([]string{emailNumber})
 	return err
 }

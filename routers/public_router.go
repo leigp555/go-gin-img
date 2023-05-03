@@ -14,14 +14,14 @@ func (routerGroup) public(r *gin.RouterGroup) {
 	}
 	//验证码发送
 	{
-		r.GET("/captcha", api.Group.Public.SendImgCaptcha)  //图形验证码
-		r.POST("/email", api.Group.Public.SendEmailCaptcha) //邮箱验证码
+		r.GET("/captcha", api.Group.Public.SendImgCaptcha) //图形验证码
+		r.GET("/email", api.Group.Public.SendEmailCaptcha) //邮箱验证码
 	}
 	//登录&注册
 	{
-		r.POST("/register", api.Group.Public.Register)      //注册
-		r.GET("/login", api.Group.Public.Login)             //普通登录
-		r.GET("/auth/github", api.Group.Public.GithubLogin) //GitHub登录
-		r.GET("/auth/google", api.Group.Public.GoogleLogin) //google登录
+		r.POST("/register", api.Group.Public.Register)       //注册
+		r.POST("/login", api.Group.Public.Login)             //普通登录
+		r.POST("/auth/github", api.Group.Public.GithubLogin) //GitHub登录
+		r.POST("/auth/google", api.Group.Public.GoogleLogin) //google登录
 	}
 }
