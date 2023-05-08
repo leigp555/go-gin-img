@@ -1,11 +1,12 @@
 package models
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"img/server/global"
 )
 
-type User struct {
+type UserModel struct {
 	gorm.Model
 	Username       string `gorm:"type:varchar(50);comment:用户名"`
 	NickName       string `gorm:"type:varchar(50);comment:昵称"`
@@ -24,12 +25,31 @@ type User struct {
 	Avatar         string `gorm:"type:varchar(100);comment:用户头像"`
 }
 
-func (User) Generate() {
+// Generate 创建表
+func (UserModel) Generate() {
 	var db = global.Mdb
-	err := db.AutoMigrate(&User{})
+	err := db.AutoMigrate(&UserModel{})
 	if err != nil {
 		global.Slog.Panicln("User表创建失败")
 	}
 }
 
-var UserTable = User{}
+// CreateUser 创建用户
+func (UserModel) CreateUser(user *UserModel) (error error) {
+	if err := global.Mdb.Create(user).Error; err != nil {
+		return errors.New("创建用户失败")
+	}
+	return nil
+}
+
+// UpdateUser 更新用户
+//func (UserModel) UpdateUser() (error error) {
+//	a:=map[string]any{"name":"hello","age":18,"active":false}
+//	a1:=
+//	global.Mdb.Model(&UserModel{}).Where().Select("name").Updates(map[string]interface{}{"name": "hello", "age": 18, "active": false}
+//}
+
+// FindUser 查询用户
+//func (User) FindUser() (error error) {
+//
+//}

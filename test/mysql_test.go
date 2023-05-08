@@ -14,21 +14,105 @@ type Product struct {
 	Price uint
 }
 
+// `User` 属于 `Company`，`CompanyID` 是外键
+type User struct {
+	gorm.Model
+	Name      string
+	CompanyID int
+	Company   Company `gorm:"foreignKey:CompanyID"`
+}
+
+type Company struct {
+	gorm.Model
+	Name string
+}
+
+var (
+	db *gorm.DB
+)
+
 func TestMysql(t *testing.T) {
+	LinkDb()
+	CreateTable()
+	if err := db.Create(&User{Name: "lgp", Company: Company{Name: "xxx"}}).Error; err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 连接数据库
+func LinkDb() {
 	dsn := "root:123456abc@tcp(1.117.141.66:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	mdb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db = mdb
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("数据库连接成功")
-	err = db.AutoMigrate(&Product{})
+}
+
+// 创建表
+func CreateTable() {
+	err := db.AutoMigrate(&Product{}, &User{}, &Company{})
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("表创建成功")
-	db.Create(&Product{Code: "D42", Price: 100})
+}
+
+// 创建表数据
+func Create() {
+	//创建单条记录
+	if err := db.Create(&Product{Code: "DT55", Price: 400}).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	//创建多条记录
+	proArr := []*Product{
+		{Code: "DT60", Price: 400},
+		{Code: "DT61", Price: 500},
+		{Code: "DT62", Price: 600},
+	}
+	if err := db.Create(&proArr).Error; err != nil {
+		log.Fatal(err)
+	}
+	//指定字段创建
+	if err := db.Select("Code").Create(&Product{Code: "DT63", Price: 700}).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	if err := db.Omit("Code").Create(&Product{Code: "DT63", Price: 700}).Error; err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 软删除表数据
+func Delete() {
+	if err := db.Where("code = ?", "D42").Delete(&Product{}).Error; err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 永久删除表数据
+func DeleteForever() {
+	if err := db.Where("code = ?", "D42").Unscoped().Delete(&Product{}).Error; err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 修改数据
+func Update() {
+	err := db.Model(&Product{}).Where("code=?", "D122").Updates(map[string]interface{}{"code": "DXX", "price": 456}).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// 查询数据
+func Search() {
 	var product Product
-	db.First(&product, 1)                 // 根据整型主键查找
-	db.First(&product, "code = ?", "D42") // 查找 code 字段值为 D42 的记录
+	err := db.Where("code = ?", "D44").First(&product).Error
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(product)
 }
