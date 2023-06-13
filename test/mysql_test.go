@@ -26,6 +26,12 @@ type Company struct {
 	gorm.Model
 	Name string
 }
+type A struct {
+	gorm.Model
+	Name   string `gorm:"not null"`
+	Age    int    `gorm:"not null"`
+	Gender string `gorm:"not null"`
+}
 
 var (
 	db *gorm.DB
@@ -34,9 +40,19 @@ var (
 func TestMysql(t *testing.T) {
 	LinkDb()
 	CreateTable()
-	if err := db.Create(&User{Name: "lgp", Company: Company{Name: "xxx"}}).Error; err != nil {
-		log.Fatal(err)
+	u := A{}
+	ret := db.Model(A{}).Where("name=?", "hello").First(&u)
+	//if ret.Error!= nil && errors.Is(gorm.ErrRecordNotFound, ret.Error) {
+	//	fmt.Println("first方法没有查到数据")
+	//}
+
+	if ret.Error != nil {
+		fmt.Println("find方法查询出错")
 	}
+	if ret.RowsAffected == 0 {
+		fmt.Println("没有查到数据")
+	}
+	fmt.Println(u)
 }
 
 // 连接数据库
@@ -52,7 +68,7 @@ func LinkDb() {
 
 // 创建表
 func CreateTable() {
-	err := db.AutoMigrate(&Product{}, &User{}, &Company{})
+	err := db.AutoMigrate(&Product{}, &User{}, &Company{}, &A{})
 	if err != nil {
 		log.Fatal(err)
 	}
